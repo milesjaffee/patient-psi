@@ -33,7 +33,7 @@ pip install -r requirements.txt
 # Next.js dependencies
 conda install -c conda-forge nodejs
 npm install -g pnpm@8.7.4
-npn install -g ts-node
+npm install -g ts-node
 npm install -g vercel
 ```
 

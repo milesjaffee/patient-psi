@@ -9,7 +9,9 @@ const path = require('path');
 
 async function storeDataToKV() {
     try {
-        const dataFilePath = path.join(process.cwd(), 'python/data', 'profiles.json');
+        const dataFileName = 'Patient_Psi_CM_Dataset.json';
+        // const dataFileName = 'profiles.json';
+        const dataFilePath = path.join(process.cwd(), 'python/data', dataFileName);
         const jsonData = JSON.parse(await readFile(dataFilePath, 'utf8'));
 
         for (const profile of jsonData) {
