@@ -8,6 +8,7 @@ import {
   createStreamableValue
 } from 'ai/rsc'
 import OpenAI from 'openai'
+// import { playAudio } from 'openai/helpers/audio'
 
 import {
   nanoid
@@ -44,7 +45,8 @@ async function submitUserMessage(content: string, type: string) {
 
   let textStream: undefined | ReturnType<typeof createStreamableValue<string>>
   let textNode: undefined | React.ReactNode
-
+  let botResponse: string = '';
+  
   const ui = render({
     model: 'gpt-4',
     provider: openai,
@@ -63,7 +65,7 @@ async function submitUserMessage(content: string, type: string) {
     text: ({ content, done, delta }) => {
       if (!textStream) {
         textStream = createStreamableValue('')
-        textNode = <BotMessage content={textStream.value} />
+        textNode = <BotMessage content={textStream.value} isDone={done} />
       }
 
       if (done) {
@@ -79,6 +81,10 @@ async function submitUserMessage(content: string, type: string) {
             }
           ]
         })
+
+        textNode = <BotMessage content={content} isDone={done} />
+        botResponse = content
+
       } else {
         textStream.update(delta)
       }
@@ -89,7 +95,8 @@ async function submitUserMessage(content: string, type: string) {
 
   return {
     id: nanoid(),
-    display: ui
+    display: ui,
+    content: botResponse
   }
 }
 

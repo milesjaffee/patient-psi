@@ -65,6 +65,20 @@ export function PromptForm({
         // Submit and get response message
         const responseMessage = await submitUserMessage(value)
         setMessages(currentMessages => [...currentMessages, responseMessage])
+
+        // if ('speechSynthesis' in window) {
+        //   if (responseMessage.content !== '') {
+        //     const utterance = new SpeechSynthesisUtterance(responseMessage.content)
+        //     utterance.lang = 'en-US'
+        //     utterance.rate = 1
+        //     console.log('Speaking:', responseMessage.content)
+        //     window.speechSynthesis.speak(utterance)
+        //   }
+        // }
+        // else {
+        //   console.warn('Speech synthesis is not supported in this browser.')
+        // }
+
       }}
     >
       <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden bg-background px-8 sm:rounded-md sm:border sm:px-12">

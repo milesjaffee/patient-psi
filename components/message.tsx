@@ -10,6 +10,8 @@ import remarkMath from 'remark-math'
 import { StreamableValue } from 'ai/rsc'
 import { useStreamableText } from '@/lib/hooks/use-streamable-text'
 
+import { useEffect } from 'react'
+
 // Different types of message bubbles.
 
 export function UserMessage({ children }: { children: React.ReactNode }) {
@@ -27,12 +29,36 @@ export function UserMessage({ children }: { children: React.ReactNode }) {
 
 export function BotMessage({
   content,
+  isDone,
   className
 }: {
   content: string | StreamableValue<string>
+  isDone: boolean,
   className?: string
 }) {
   const text = useStreamableText(content)
+
+  const speak = (text: string) => {
+
+    if ('speechSynthesis' in window) {
+      console.log('Speaking:', text)
+      window.speechSynthesis.cancel() // Cancel any ongoing speech synthesis
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.lang = 'en-US';
+      utterance.rate = 1
+      window.speechSynthesis.speak(utterance)
+    } else {
+      console.error('TTS is not supported in this browser.')
+    }
+  }
+
+  useEffect(() => {
+    console.log('Attempting to speak:', text, 'isDone:', isDone)
+    if (isDone) {
+      console.log('calling speak with text:', text)
+      speak(text)
+    }
+  }, [isDone])
 
   return (
     <div className={cn('group relative flex items-start md:-ml-12', className)}>
@@ -47,6 +73,9 @@ export function BotMessage({
             p({ children }) {
               return <p className="mb-2 last:mb-0">{children}</p>
             },
+
+
+            // this code part seems to be unnecessary
             code({ node, inline, className, children, ...props }) {
               if (children.length) {
                 if (children[0] == '▍') {
@@ -77,6 +106,8 @@ export function BotMessage({
                 />
               )
             }
+            // end of code part
+
           }}
         >
           {text}
