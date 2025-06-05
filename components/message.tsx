@@ -10,6 +10,9 @@ import remarkMath from 'remark-math'
 import { StreamableValue } from 'ai/rsc'
 import { useStreamableText } from '@/lib/hooks/use-streamable-text'
 
+import { Button } from '@/components/ui/button'
+import { IconArrowElbow } from '@/components/ui/icons'
+
 import { useEffect } from 'react'
 
 // Different types of message bubbles.
@@ -36,12 +39,12 @@ export function BotMessage({
   isDone: boolean,
   className?: string
 }) {
-  const text = useStreamableText(content)
+  const text = useStreamableText(content);
 
   const speak = (text: string) => {
 
     if ('speechSynthesis' in window) {
-      console.log('Speaking:', text)
+      // console.log('Speaking:', text)
       window.speechSynthesis.cancel() // Cancel any ongoing speech synthesis
       const utterance = new SpeechSynthesisUtterance(text)
       utterance.lang = 'en-US';
@@ -55,7 +58,7 @@ export function BotMessage({
   useEffect(() => {
     console.log('Attempting to speak:', text, 'isDone:', isDone)
     if (isDone) {
-      console.log('calling speak with text:', text)
+      // console.log('calling speak with text:', text)
       speak(text)
     }
   }, [isDone])
@@ -65,53 +68,66 @@ export function BotMessage({
       <div className="flex size-[24px] shrink-0 select-none items-center justify-center rounded-md border bg-primary text-primary-foreground shadow-sm">
         <IconOpenAI />
       </div>
-      <div className="ml-4 flex-1 space-y-2 overflow-hidden px-1">
-        <MemoizedReactMarkdown
-          className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
-          remarkPlugins={[remarkGfm, remarkMath]}
-          components={{
-            p({ children }) {
-              return <p className="mb-2 last:mb-0">{children}</p>
-            },
+      <div className="ml-4 flex-1 flex items-center space-y-2 overflow-hidden px-1">
+        <div className="flex-1">
+          <MemoizedReactMarkdown
+            className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
+            remarkPlugins={[remarkGfm, remarkMath]}
+            components={{
+              p({ children }) {
+                return <p className="mb-2 last:mb-0">{children}</p>
+              },
 
 
-            // this code part seems to be unnecessary
-            code({ node, inline, className, children, ...props }) {
-              if (children.length) {
-                if (children[0] == '▍') {
+              // this code part seems to be unnecessary
+              code({ node, inline, className, children, ...props }) {
+                if (children.length) {
+                  if (children[0] == '▍') {
+                    return (
+                      <span className="mt-1 animate-pulse cursor-default">▍</span>
+                    )
+                  }
+
+                  children[0] = (children[0] as string).replace('`▍`', '▍')
+                }
+
+                const match = /language-(\w+)/.exec(className || '')
+
+                if (inline) {
                   return (
-                    <span className="mt-1 animate-pulse cursor-default">▍</span>
+                    <code className={className} {...props}>
+                      {children}
+                    </code>
                   )
                 }
 
-                children[0] = (children[0] as string).replace('`▍`', '▍')
-              }
-
-              const match = /language-(\w+)/.exec(className || '')
-
-              if (inline) {
                 return (
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
+                  <CodeBlock
+                    key={Math.random()}
+                    language={(match && match[1]) || ''}
+                    value={String(children).replace(/\n$/, '')}
+                    {...props}
+                  />
                 )
               }
+              // end of code part
 
-              return (
-                <CodeBlock
-                  key={Math.random()}
-                  language={(match && match[1]) || ''}
-                  value={String(children).replace(/\n$/, '')}
-                  {...props}
-                />
-              )
-            }
-            // end of code part
+            }}
+          >
+            {text}
+          </MemoizedReactMarkdown>
+        </div>
+      </div>
 
-          }}
-        >
-          {text}
-        </MemoizedReactMarkdown>
+      <div className="absolute right-2 top-1/2 -translate-y-1/2">
+        <Button
+              type="button"
+              size="icon"
+              onClick={() => console.log('Action button clicked!')}
+            >
+              Say
+          <span className="sr-only">Speak response</span>
+        </Button>
       </div>
     </div>
   )
