@@ -51,6 +51,7 @@ export function PromptForm({
     recognition.lang = 'en-US';
     recognition.interimResults = false; // Only capture final results
     recognition.maxAlternatives = 1;
+    recognition.continuous = true; // Keep recognition active until stopped (otherwise it stops automatically)
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
@@ -64,7 +65,12 @@ export function PromptForm({
 
     recognition.onend = () => {
       console.log('Speech recognition ended.');
-      setIsListening(false); // Reset listening state when recognition ends
+      if (isListening) {
+        console.log('Restarting speech recognition...');
+        recognition.start(); // Automatically restart recognition if still listening
+      } else {
+        console.log('Speech recognition stopped by user.');
+      }
     };
 
     recognitionRef.current = recognition; // Store the recognition instance
