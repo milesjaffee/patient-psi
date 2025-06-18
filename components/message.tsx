@@ -1,6 +1,6 @@
 'use client'
 
-import { IconOpenAI, IconUser } from '@/components/ui/icons'
+import { IconOpenAI, IconUser, IconSun } from '@/components/ui/icons'
 import { cn } from '@/lib/utils'
 import { spinner } from './spinner'
 import { CodeBlock } from './ui/codeblock'
@@ -125,7 +125,7 @@ export function BotMessage({
               size="icon"
               onClick={() => console.log('Action button clicked!')}
             >
-              Say
+          <IconSun /> {/* TODO: Make icon a speaker */}
           <span className="sr-only">Speak response</span>
         </Button>
       </div>
