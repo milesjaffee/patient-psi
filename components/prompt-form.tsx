@@ -51,7 +51,7 @@ export function PromptForm({
     recognition.lang = 'en-US';
     recognition.interimResults = false; // Only capture final results
     recognition.maxAlternatives = 1;
-    recognition.continuous = true; // Keep recognition active until stopped (otherwise it stops automatically)
+    recognition.continuous = false; // Keep recognition active until stopped (otherwise it stops automatically)
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
