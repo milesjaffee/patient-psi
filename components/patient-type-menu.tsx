@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { patientTypes, patientTypeDescriptions } from "@/app/api/data/patient-types"
 import { PatientProfile, initialProfile } from '@/app/api/data/patient-profiles'
 
+import {LanguageDropdown} from "./language-dropdown"
+
 // Call api/prompt/GET to fetch patient profile 
 async function fetchPatientProfile(
     setIsStarted: (isStarted: boolean) => void,
@@ -150,6 +152,9 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
                             <p className="block pt-5 font-medium leading-6">
                                 {selectedTypeDescription}
                             </p>
+                            <div>
+                                <LanguageDropdown />
+                            </div>
                             {!isStarted && (
                                 <div className="block pt-5">
                                     <button onClick={handleStartButtonClick}

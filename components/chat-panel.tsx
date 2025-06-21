@@ -11,6 +11,7 @@ import { useAIState, useActions, useUIState } from 'ai/rsc'
 import type { AI } from '@/lib/chat/actions'
 import { nanoid } from 'nanoid'
 import { UserMessage } from './message'
+import { useLanguage } from '@/lib/hooks/use-language';
 
 export interface ChatPanelProps {
   id?: string
@@ -34,7 +35,9 @@ export function ChatPanel({
   const { submitUserMessage } = useActions()
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false)
 
-  const exampleMessages = {
+  const { language }: { language: string } = useLanguage();
+
+  const exampleMessages: Record<string, { heading: string; subheading: string; message: string }[]> = {
     "en-US": [ // English (US)
       {
         heading: 'Example greeting message:',
@@ -120,7 +123,7 @@ export function ChatPanel({
       <div className="mx-auto sm:max-w-2xl sm:px-4">
         <div className="mb-4 grid grid-cols-2 gap-2 px-4 sm:px-0">
           {messages.length === 0 &&
-            exampleMessages["en-US"].map((example, index) => (
+            exampleMessages[language].map((example, index) => (
               <div
                 key={example.heading}
                 className={`cursor-pointer rounded-lg border bg-white p-4 hover:bg-zinc-50 dark:bg-zinc-950 dark:hover:bg-zinc-900 ${index > 1 && 'hidden md:block'
