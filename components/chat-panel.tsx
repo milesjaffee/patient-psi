@@ -34,13 +34,80 @@ export function ChatPanel({
   const { submitUserMessage } = useActions()
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false)
 
-  const exampleMessages = [
-    {
-      heading: 'Example greeting message:',
-      subheading: 'How are you feeling today?',
-      message: `How are you feeling today?`
-    }
-  ]
+  const exampleMessages = {
+    "en-US": [ // English (US)
+      {
+        heading: 'Example greeting message:',
+        subheading: 'How are you feeling today?',
+        message: `How are you feeling today?`
+      }
+    ],
+    "es": [ // Spanish
+      {
+        heading: 'Ejemplo de mensaje de saludo:',
+        subheading: '¿Cómo te sientes hoy?',
+        message: `¿Cómo te sientes hoy?`
+      }
+    ],
+    "fr": [ // French
+      {
+        heading: 'Exemple de message de bienvenue :',
+        subheading: `Comment te sens-tu aujourd'hui ?`,
+        message: `Comment te sens-tu aujourd'hui ?`
+      }
+    ],
+    "zh-CN": [ // Chinese
+      {
+        heading: '问候语示例：',
+        subheading: `你今天感觉怎么样？`,
+        message: `你今天感觉怎么样？`
+      }
+    ],
+    "hi": [ // Hindi
+      {
+        heading: 'उदाहरण शुभकामना संदेश:',
+        subheading: `आज आप कैसा महसूस कर रहे हैं?`,
+        message: `आज आप कैसा महसूस कर रहे हैं?`
+      }
+    ],
+    "ar": [ // Arabic
+      {
+        heading: 'مثال لرسالة الترحيب:',
+        subheading: `كيف تشعر اليوم؟`,
+        message: `كيف تشعر اليوم؟`
+      }
+    ],
+    "de": [ // German
+      {
+        heading: 'Beispiel einer Begrüßungsnachricht:',
+        subheading: `Wie fühlen Sie sich heute?`,
+        message: `Wie fühlen Sie sich heute?`
+      }
+    ],
+    "pt": [ // Portuguese
+      {
+        heading: 'Exemplo de mensagem de saudação:',
+        subheading: `Como você está se sentindo hoje?`,
+        message: `Como você está se sentindo hoje?`
+      }
+    ],
+    
+    "ja": [ // Japanese
+      {
+        heading: '挨拶メッセージの例:',
+        subheading: `今日は気分はどうですか？`,
+        message: `今日は気分はどうですか？`
+      }
+    ],
+    "ru": [ // Russian
+      {
+        heading: 'Пример приветственного сообщения:',
+        subheading: `Как вы себя чувствуете сегодня?`,
+        message: `Как вы себя чувствуете сегодня?`
+      }
+    ],
+    
+  }
   // const exampleMessages: any[] = []
 
   return (
@@ -53,7 +120,7 @@ export function ChatPanel({
       <div className="mx-auto sm:max-w-2xl sm:px-4">
         <div className="mb-4 grid grid-cols-2 gap-2 px-4 sm:px-0">
           {messages.length === 0 &&
-            exampleMessages.map((example, index) => (
+            exampleMessages["en-US"].map((example, index) => (
               <div
                 key={example.heading}
                 className={`cursor-pointer rounded-lg border bg-white p-4 hover:bg-zinc-50 dark:bg-zinc-950 dark:hover:bg-zinc-900 ${index > 1 && 'hidden md:block'

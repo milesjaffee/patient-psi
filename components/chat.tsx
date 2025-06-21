@@ -29,7 +29,7 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
   const [input, setInput] = useState('')
   const [messages] = useUIState()
   const [aiState] = useAIState()
-
+  
   const [_, setNewChatId] = useLocalStorage('newChatId', id)
   const [isStarted, setIsStarted] = useState(false);
   const [patientProfile, setPatientProfile] = useState<PatientProfile>(initialProfile);
