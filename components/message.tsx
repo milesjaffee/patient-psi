@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { IconArrowElbow } from '@/components/ui/icons'
 
 import { useEffect } from 'react'
+import { useLanguage } from '@/lib/hooks/use-language';
 
 // Different types of message bubbles.
 
@@ -40,14 +41,16 @@ export function BotMessage({
   className?: string
 }) {
   const text = useStreamableText(content);
+  const { language }: { language: string } = useLanguage();
 
   const speak = (text: string) => {
 
     if ('speechSynthesis' in window) {
+      console.log("Available voices:", window.speechSynthesis.getVoices());
       // console.log('Speaking:', text)
       window.speechSynthesis.cancel() // Cancel any ongoing speech synthesis
       const utterance = new SpeechSynthesisUtterance(text)
-      utterance.lang = 'en-US';
+      utterance.lang = language;
       utterance.rate = 1
       window.speechSynthesis.speak(utterance)
     } else {

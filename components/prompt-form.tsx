@@ -18,6 +18,7 @@ import { useEnterSubmit } from '@/lib/hooks/use-enter-submit'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
 import { Stopwatch } from './stopwatch'
+import { useLanguage } from '@/lib/hooks/use-language';
 
 export function PromptForm({
   input,
@@ -34,6 +35,8 @@ export function PromptForm({
   const [isListening, setIsListening] = React.useState(false); // Track speech recognition state
   const recognitionRef = React.useRef<any>(null);
 
+  const { language }: { language: string } = useLanguage();
+
   React.useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus()
@@ -48,7 +51,7 @@ export function PromptForm({
     }
 
     const recognition = new (window as any).webkitSpeechRecognition();
-    recognition.lang = 'en-US';
+    recognition.lang = language;
     recognition.interimResults = false; // Only capture final results
     recognition.maxAlternatives = 1;
     recognition.continuous = false; // Keep recognition active until stopped (otherwise it stops automatically)

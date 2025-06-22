@@ -45,14 +45,14 @@ export function ChatPanel({
         message: `How are you feeling today?`
       }
     ],
-    "es": [ // Spanish
+    "es-ES": [ // Spanish
       {
         heading: 'Ejemplo de mensaje de saludo:',
         subheading: '¿Cómo te sientes hoy?',
         message: `¿Cómo te sientes hoy?`
       }
     ],
-    "fr": [ // French
+    "fr-FR": [ // French
       {
         heading: 'Exemple de message de bienvenue :',
         subheading: `Comment te sens-tu aujourd'hui ?`,
@@ -66,28 +66,28 @@ export function ChatPanel({
         message: `你今天感觉怎么样？`
       }
     ],
-    "hi": [ // Hindi
-      {
-        heading: 'उदाहरण शुभकामना संदेश:',
-        subheading: `आज आप कैसा महसूस कर रहे हैं?`,
-        message: `आज आप कैसा महसूस कर रहे हैं?`
-      }
-    ],
-    "ar": [ // Arabic
-      {
-        heading: 'مثال لرسالة الترحيب:',
-        subheading: `كيف تشعر اليوم؟`,
-        message: `كيف تشعر اليوم؟`
-      }
-    ],
-    "de": [ // German
+    // "hi": [ // Hindi
+    //   {
+    //     heading: 'उदाहरण शुभकामना संदेश:',
+    //     subheading: `आज आप कैसा महसूस कर रहे हैं?`,
+    //     message: `आज आप कैसा महसूस कर रहे हैं?`
+    //   }
+    // ],
+    // "ar": [ // Arabic
+    //   {
+    //     heading: 'مثال لرسالة الترحيب:',
+    //     subheading: `كيف تشعر اليوم؟`,
+    //     message: `كيف تشعر اليوم؟`
+    //   }
+    // ],
+    "de-DE": [ // German
       {
         heading: 'Beispiel einer Begrüßungsnachricht:',
         subheading: `Wie fühlen Sie sich heute?`,
         message: `Wie fühlen Sie sich heute?`
       }
     ],
-    "pt": [ // Portuguese
+    "pt-PT": [ // Portuguese
       {
         heading: 'Exemplo de mensagem de saudação:',
         subheading: `Como você está se sentindo hoje?`,
@@ -95,14 +95,14 @@ export function ChatPanel({
       }
     ],
     
-    "ja": [ // Japanese
+    "ja-JP": [ // Japanese
       {
         heading: '挨拶メッセージの例:',
         subheading: `今日は気分はどうですか？`,
         message: `今日は気分はどうですか？`
       }
     ],
-    "ru": [ // Russian
+    "ru-RU": [ // Russian
       {
         heading: 'Пример приветственного сообщения:',
         subheading: `Как вы себя чувствуете сегодня?`,
