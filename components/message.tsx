@@ -126,7 +126,10 @@ export function BotMessage({
         <Button
               type="button"
               size="icon"
-              onClick={() => console.log('Action button clicked!')}
+              onClick={() => {
+                console.log('Action button clicked!');
+                speak(text);
+              }}
             >
           <IconSun /> {/* TODO: Make icon a speaker */}
           <span className="sr-only">Speak response</span>
