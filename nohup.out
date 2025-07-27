@@ -1,0 +1,54 @@
+
+> @ dev /home/avh226/patientpsi/patient-psi
+> next dev "--port" "8001"
+
+   ▲ Next.js 14.1.3
+   - Local:        http://localhost:8001
+   - Environments: .env.local
+
+ ✓ Ready in 2.5s
+ ✓ Compiled /middleware in 331ms (211 modules)
+ ○ Compiling /chat/[id] ...
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled /chat/[id] in 5s (3489 modules)
+ ✓ Compiled in 294ms (1538 modules)
+ ✓ Compiled /api/type in 453ms (1955 modules)
+ ✓ Compiled (1957 modules)
+ ELIFECYCLE  Command failed.
+[?25h
+
+> @ dev /home/avh226/patientpsi/patient-psi
+> next dev "--port" "8001"
+
+   ▲ Next.js 14.1.3
+   - Local:        http://localhost:8001
+   - Environments: .env.local
+
+ ✓ Ready in 2.3s
+ ✓ Compiled /middleware in 250ms (211 modules)
+ ○ Compiling / ...
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled / in 4.2s (3490 modules)
+ ✓ Compiled in 689ms (1538 modules)
+[?25h
+
+> @ dev /home/avh226/patientpsi/patient-psi
+> next dev "--port" "8001"
+
+   ▲ Next.js 14.1.3
+   - Local:        http://localhost:8001
+   - Environments: .env.local
+
+ ✓ Ready in 2.6s
+ ✓ Compiled /middleware in 308ms (211 modules)
+ ○ Compiling / ...
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled / in 4.2s (3490 modules)
+ ✓ Compiled in 509ms (1538 modules)
+[?25h

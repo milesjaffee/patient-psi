@@ -1,0 +1,9 @@
+conda activate /home/avh226/patientpsi
+cd patientpsi/patient-psi
+pnpm dev --port 8001
+nohup pnpm dev --port 8001 &
+cat nohup.out
+tail -f nohup.out
+ps aux | grep avh226
+ps aux | grep avh226 | grep next
+kill <process ID for node command>
