@@ -1,6 +1,6 @@
 'use client'
 
-import { IconOpenAI, IconUser, IconSun } from '@/components/ui/icons'
+import { IconOpenAI, IconUser, IconSun, IconMessage } from '@/components/ui/icons'
 import { cn } from '@/lib/utils'
 import { spinner } from './spinner'
 import { CodeBlock } from './ui/codeblock'
@@ -9,6 +9,12 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import { StreamableValue } from 'ai/rsc'
 import { useStreamableText } from '@/lib/hooks/use-streamable-text'
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
 
 import { Button } from '@/components/ui/button'
 import { IconArrowElbow } from '@/components/ui/icons'
@@ -58,7 +64,7 @@ export function BotMessage({
     }
   }
 
-  useEffect(() => {
+  useEffect(() => { //TODO only speak when text is done and not on reload of preexisting chat
     console.log('Attempting to speak:', text, 'isDone:', isDone)
     if (isDone) {
       // console.log('calling speak with text:', text)
@@ -123,17 +129,24 @@ export function BotMessage({
       </div>
 
       <div className="absolute right-2 top-1/2 -translate-y-1/2">
-        <Button
-              type="button"
-              size="icon"
-              onClick={() => {
-                console.log('Action button clicked!');
-                speak(text);
-              }}
-            >
-          <IconSun /> {/* TODO: Make icon a speaker */}
-          <span className="sr-only">Speak response</span>
-        </Button>
+        
+        <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                  type="button"
+                  size="icon"
+                  //title="Speak response"
+                  onClick={() => {
+                    console.log('Action button clicked!');
+                    speak(text);
+                  }}
+                >
+              <IconMessage /> {/* TODO: Make icon a speaker */}
+              <span className="sr-only">Speak response</span>
+            </Button>
+            </TooltipTrigger>
+            <TooltipContent>Speak response</TooltipContent>
+          </Tooltip>
       </div>
     </div>
   )
