@@ -137,7 +137,8 @@ export function BotMessage({
                   size="icon"
                   //title="Speak response"
                   onClick={() => {
-                    console.log('Action button clicked!');
+                    console.log('Speak button clicked!');
+                    console.log('Language:', language);
                     speak(text);
                   }}
                 >
