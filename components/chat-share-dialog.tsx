@@ -53,7 +53,7 @@ export function ChatShareDialog({
         <DialogHeader>
           <DialogTitle>Share link to chat</DialogTitle>
           <DialogDescription>
-            Anyone with the URL will be able to view the shared chat.
+            Anyone with the URL will be able to view the shared chat. If this doesn't paste correctly, highlight and copy this link: {new URL(window.location.href).pathname}
           </DialogDescription>
         </DialogHeader>
         <div className="p-4 space-y-1 text-sm border rounded-md">
