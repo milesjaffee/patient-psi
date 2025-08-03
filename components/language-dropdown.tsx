@@ -5,6 +5,7 @@ export function LanguageDropdown() {
 
   const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setLanguage(event.target.value);
+    console.log('Language changed to:', event.target.value);
   };
 
   return (

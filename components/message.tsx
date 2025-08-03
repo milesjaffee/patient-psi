@@ -128,7 +128,7 @@ export function BotMessage({
         </div>
       </div>
 
-      <div className="absolute right-2 top-1/2 -translate-y-1/2">
+      <div className="relative right-1 top-1/2 ">
         
         <Tooltip>
             <TooltipTrigger asChild>
