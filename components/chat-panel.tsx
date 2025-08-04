@@ -12,6 +12,8 @@ import type { AI } from '@/lib/chat/actions'
 import { nanoid } from 'nanoid'
 import { UserMessage } from './message'
 import { useLanguage } from '@/lib/hooks/use-language';
+import { setChatLanguage, getChatLanguage } from '@/app/api/getDataFromKV'
+
 
 export interface ChatPanelProps {
   id?: string
@@ -36,6 +38,7 @@ export function ChatPanel({
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false)
 
   const { language }: { language: string } = useLanguage();
+  console.log('ChatPanel language:', language);
 
   const exampleMessages: Record<string, { heading: string; subheading: string; message: string }[]> = {
     "en-US": [ // English (US)
@@ -111,6 +114,23 @@ export function ChatPanel({
     ],
     
   }
+
+  if (id) getChatLanguage(id).then((chatLang) => {
+    console.log('ChatPanel getChatLanguage:', chatLang, 'for chat ID:', id);
+    if (!chatLang && messages.length === 0) {
+      console.log('Setting chat language from KV:', language);
+      //setInput(''); // Clear input to avoid confusion
+      setChatLanguage(id, language); // Update chat language in KV
+    }
+    else if (chatLang) {
+      console.log('Chat language from KV:', chatLang);
+      if (chatLang !== language) {
+        console.warn(`Chat language mismatch: KV=${chatLang}, Current=${language}`);
+      }
+    }
+  });
+
+  
   // const exampleMessages: any[] = []
 
   return (

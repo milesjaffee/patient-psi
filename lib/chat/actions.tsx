@@ -31,6 +31,10 @@ async function submitUserMessage(content: string, type: string) {
 
   const aiState = getMutableAIState<typeof AI>()
 
+  const translateMessage = async (text: string) => {
+    return 'this should be translation of: '+text;
+  }
+
   aiState.update({
     ...aiState.get(),
     messages: [
@@ -62,7 +66,7 @@ async function submitUserMessage(content: string, type: string) {
         name: message.name
       }))
     ],
-    text: ({ content, done, delta }) => {
+    text: async ({ content, done, delta }) => {
       if (!textStream) {
         textStream = createStreamableValue('')
         textNode = <BotMessage content={textStream.value} isDone={done} />
@@ -70,19 +74,27 @@ async function submitUserMessage(content: string, type: string) {
 
       if (done) {
         textStream.done()
+        const translatedMessage = await translateMessage(content); // Placeholder for translation function
+
+        const newId = nanoid();
+
         aiState.done({
           ...aiState.get(),
           messages: [
             ...aiState.get().messages,
             {
-              id: nanoid(),
+              id: newId,
               role: 'assistant',
               content,
             }
-          ]
+          ],
+          translations: {
+            ...aiState.get().translations,
+            [newId]: translatedMessage
+          }
         })
 
-        textNode = <BotMessage content={content} isDone={done} />
+        textNode = <BotMessage content={content} isDone={done} translation={translatedMessage} id={newId}/>
         botResponse = content
 
       } else {
@@ -169,6 +181,7 @@ export const AI = createAI<AIState, UIState>({
 })
 
 export const getUIStateFromAIState = (aiState: Chat) => {
+  //console.log('Translations: '+aiState.translations);
   return aiState.messages
     .filter(message => message.role !== 'system')
     .map((message, index) => ({
@@ -181,6 +194,7 @@ export const getUIStateFromAIState = (aiState: Chat) => {
             content={message.content} 
             isDone={true} 
             translation={aiState.translations?.[message.id]} 
+            id={message.id}
           />
         )
     }))

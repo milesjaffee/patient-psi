@@ -105,7 +105,7 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
             // const selectedPatientTypeContent = patientTypes.find((item) => item.type === selectedType)?.content;
             console.log(selectedType);
             try {
-                const response = await fetch('/api/prompt', {
+                const response = await fetch('/api/prompt', { 
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

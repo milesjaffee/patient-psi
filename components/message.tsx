@@ -41,16 +41,18 @@ export function BotMessage({
   content,
   isDone,
   className,
-  translation
+  translation, //deprecated i think
+  id,
 }: {
   content: string | StreamableValue<string>
   isDone: boolean,
   className?: string,
   translation?: string
+  id?: string
 }) {
 
   const translationOk = translation && translation.trim() !== '';
-  const text = translationOk? translation : useStreamableText(content);
+  const text = translationOk? translation : '';
   const [showOriginal, setShowOriginal] = useState(false);
   const { language }: { language: string } = useLanguage();
 
@@ -132,7 +134,8 @@ export function BotMessage({
           </MemoizedReactMarkdown>
           {showOriginal && (
             <div className="mt-2 text-sm text-gray-500">
-              <strong>Original:</strong> {content}
+              <p><strong>Original:</strong> {content}</p>
+              <strong>Message ID:</strong> {id? id: 'n/a'}
             </div>
           )}
         </div>

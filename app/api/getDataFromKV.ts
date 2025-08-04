@@ -1,3 +1,4 @@
+'use server';
 import { PatientProfile } from "./data/patient-profiles";
 import { patientTypes, patientTypeDescriptions } from "./data/patient-types";
 import { auth } from "@/auth";
@@ -51,6 +52,42 @@ export async function getPatientType(): Promise<string> {
     const patientType = await kv.get(patientTypeKey);
     return patientType as string;
 }
+
+export async function setMsgTranslation(msgId: string, translation: string) {
+    try {
+        const userID = await getUserID();
+        const msgTranslationKey = `msg_${msgId}_${userID}`;
+        await kv.set(msgTranslationKey, translation);
+    } catch (error) {
+        console.error('Error storing msg trans to KV:', error);
+    }
+}
+
+export async function getMsgTranslation(msgId: string): Promise<string | null> {
+    const userID = await getUserID();
+    const msgTranslationKey = `msg_${msgId}_${userID}`;
+    const translation = await kv.get(msgTranslationKey);
+    return translation ? translation as string : null;
+}
+
+export async function setChatLanguage(chatId: string, language: string) {
+    try {
+        const userID = await getUserID();
+        const chatLanguageKey = `chat_lang_${chatId}_${userID}`;
+        await kv.set(chatLanguageKey, language);
+    } catch (error) {
+        console.error('Error storing chat language to KV:', error);
+    }
+}
+
+export async function getChatLanguage(chatId: string): Promise<string | null> {
+    const userID = await getUserID();
+    const chatLanguageKey = `chat_lang_${chatId}_${userID}`;
+    const language = await kv.get(chatLanguageKey);
+    return language ? language as string : null;
+}
+
+
 
 // Random sample
 // export async function sampleProfile(): Promise<PatientProfile | null> {
@@ -161,7 +198,7 @@ async function formatPromptString(data: any): Promise<string> {
     3. Gradually reveal deeper concerns and core issues, as a real patient often requires extensive dialogue before delving into more sensitive topics. This gradual revelation creates challenges for therapists in identifying the patient's true thoughts and emotions.\n
     4. Maintain consistency with ${data.name}'s profile throughout the conversation. Ensure that your responses align with the provided background information, cognitive conceptualization diagram, and the specific situation, thoughts, emotions, and behaviors described.\n
     5. Engage in a dynamic and interactive conversation with the therapist. Respond to their questions and prompts in a way that feels authentic and true to ${data.name}'s character. Allow the conversation to flow naturally, and avoid providing abrupt or disconnected responses.\n
-    6. VERY IMPORTANT: Respond only in the language from the first message of the conversation, no matter what language the therapist addresses you in.\n
+    6. VERY IMPORTANT: Respond only in English, no matter what language the therapist addresses you in.\n
 
     You are now ${data.name}. Respond to the therapist's prompts as ${data.name} would, regardless of the specific questions asked. Limit each of your responses to a maximum of 5 sentences. If the therapist begins the conversation with a greeting like "Hi," initiate the conversation as the patient.`;
 
