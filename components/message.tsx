@@ -19,7 +19,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { IconArrowElbow } from '@/components/ui/icons'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useLanguage } from '@/lib/hooks/use-language';
 
 // Different types of message bubbles.
@@ -40,19 +40,24 @@ export function UserMessage({ children }: { children: React.ReactNode }) {
 export function BotMessage({
   content,
   isDone,
-  className
+  className,
+  translation
 }: {
   content: string | StreamableValue<string>
   isDone: boolean,
-  className?: string
+  className?: string,
+  translation?: string
 }) {
-  const text = useStreamableText(content);
+
+  const translationOk = translation && translation.trim() !== '';
+  const text = translationOk? translation : useStreamableText(content);
+  const [showOriginal, setShowOriginal] = useState(false);
   const { language }: { language: string } = useLanguage();
 
   const speak = (text: string) => {
 
     if ('speechSynthesis' in window) {
-      console.log("Available voices:", window.speechSynthesis.getVoices());
+      //console.log("Available voices:", window.speechSynthesis.getVoices());
       // console.log('Speaking:', text)
       window.speechSynthesis.cancel() // Cancel any ongoing speech synthesis
       const utterance = new SpeechSynthesisUtterance(text)
@@ -125,10 +130,15 @@ export function BotMessage({
           >
             {text}
           </MemoizedReactMarkdown>
+          {showOriginal && (
+            <div className="mt-2 text-sm text-gray-500">
+              <strong>Original:</strong> {content}
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="relative right-1 top-1/2 ">
+      <div className="relative right-1 flex flex-col">
         
         <Tooltip>
             <TooltipTrigger asChild>
@@ -137,16 +147,33 @@ export function BotMessage({
                   size="icon"
                   //title="Speak response"
                   onClick={() => {
-                    console.log('Speak button clicked!');
-                    console.log('Language:', language);
+                    console.log('Speak button clicked! Language:', language);
                     speak(text);
                   }}
                 >
-              <IconMessage /> {/* TODO: Make icon a speaker */}
+              <IconSun /> {/* TODO: Make icon a speaker */}
               <span className="sr-only">Speak response</span>
             </Button>
             </TooltipTrigger>
             <TooltipContent>Speak response</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                  type="button"
+                  size="icon"
+                  //title="Speak response"
+                  onClick={() => {
+                    console.log('Translation toggle clicked!');
+                    setShowOriginal(!showOriginal);
+                  }}
+                >
+              <IconMessage /> {/* TODO: Make icon a speaker */}
+              <span className="sr-only">Show English</span>
+            </Button>
+            </TooltipTrigger>
+            <TooltipContent>Show English</TooltipContent>
           </Tooltip>
       </div>
     </div>

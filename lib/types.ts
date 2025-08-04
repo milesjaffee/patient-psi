@@ -9,6 +9,9 @@ export interface Chat extends Record<string, any> {
   path: string
   messages: Message[]
   sharePath?: string
+
+  language?: string
+  translations?: Record<string, string>
 }
 
 export interface CCDResult extends Record<string, any> {

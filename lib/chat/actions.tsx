@@ -177,7 +177,11 @@ export const getUIStateFromAIState = (aiState: Chat) => {
         message.role === 'user' ? (
           <UserMessage>{message.content}</UserMessage>
         ) : (
-          <BotMessage content={message.content} />
+          <BotMessage 
+            content={message.content} 
+            isDone={true} 
+            translation={aiState.translations?.[message.id]} 
+          />
         )
     }))
 }

@@ -119,6 +119,10 @@ export function PromptForm({
 
         // Submit and get response message
         const responseMessage = await submitUserMessage(value)
+        console.log('Response message:', responseMessage)
+        if (responseMessage.id) {
+          
+        }
         setMessages(currentMessages => [...currentMessages, responseMessage])
 
         // if ('speechSynthesis' in window) {
