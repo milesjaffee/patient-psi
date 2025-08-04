@@ -204,6 +204,41 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
             console.log(ccdResult);
             setIsSubmitted(true);
 
+            const exportChatWithCCD = async () => {
+                try {
+                    // Fetch the chat data from the API
+                    const response = await fetch(`/api/export-chat?userId=${userId}&chatId=${chatId}`);
+                    const chatData = await response.json();
+
+                    // Add CCD result and CCD truths to the chat data
+                    const enrichedChatData = {
+                        ...chatData,
+                        ccdResult,
+                        ccdTruth: savedCCDTruth,
+                    };
+
+                    // Create a blob with the enriched chat data
+                    const blob = new Blob([JSON.stringify(enrichedChatData, null, 2)], { type: 'application/json' });
+
+                    // Create a link element to trigger the download
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `chat_${userId}_${chatId}_export.json`;
+
+                    // Append the link to the document, trigger the download, and remove the link
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    console.log('Chat data with CCD exported successfully');
+                } catch (error) {
+                    console.error('Error exporting chat data with CCD:', error);
+                }
+            };
+
+            // Call the function to export the chat data
+            exportChatWithCCD();
+
         } catch (error) {
             console.error('Error saving input values to KV database:', error);
         }
