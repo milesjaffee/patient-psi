@@ -22,6 +22,8 @@ import { IconArrowElbow } from '@/components/ui/icons'
 import { useEffect, useState } from 'react'
 import { useLanguage } from '@/lib/hooks/use-language';
 
+import { getMsgTranslation } from '@/app/api/getDataFromKV'
+
 // Different types of message bubbles.
 
 export function UserMessage({ children }: { children: React.ReactNode }) {
@@ -50,9 +52,28 @@ export function BotMessage({
   translation?: string
   id?: string
 }) {
+  const [ shownText, setShownText ] = useState(content as string);
+  useEffect(() => {
+  if (id) {
+    getMsgTranslation(id)
+      .then((translation) => {
+        if (translation) {
+          setShownText(translation);
+        } else {
+          setShownText(content as string);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching message translation:', error);
+        setShownText(content as string);
+      });
+  } else {
+    setShownText(content as string);
+  }
+}, [id, content]);
 
-  const translationOk = translation && translation.trim() !== '';
-  const text = translationOk? translation : '';
+  //const translationOk = translation && translation.trim() !== '';
+  //const text = translationOk? translation : kvTranslation || content;
   const [showOriginal, setShowOriginal] = useState(false);
   const { language }: { language: string } = useLanguage();
 
@@ -71,13 +92,13 @@ export function BotMessage({
     }
   }
 
-  useEffect(() => { //TODO only speak when text is done and not on reload of preexisting chat
+  /*useEffect(() => { //TODO only speak when text is done and not on reload of preexisting chat
     console.log('Attempting to speak:', text, 'isDone:', isDone)
     if (isDone) {
       // console.log('calling speak with text:', text)
       speak(text)
     }
-  }, [isDone])
+  }, [isDone])*/
 
   return (
     <div className={cn('group relative flex items-start md:-ml-12', className)}>
@@ -130,7 +151,7 @@ export function BotMessage({
 
             }}
           >
-            {text}
+            {shownText}
           </MemoizedReactMarkdown>
           {showOriginal && (
             <div className="mt-2 text-sm text-gray-500">
@@ -151,7 +172,7 @@ export function BotMessage({
                   //title="Speak response"
                   onClick={() => {
                     console.log('Speak button clicked! Language:', language);
-                    speak(text);
+                    speak(shownText);
                   }}
                 >
               <IconSun /> {/* TODO: Make icon a speaker */}

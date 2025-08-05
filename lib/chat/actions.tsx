@@ -18,7 +18,7 @@ import { SpinnerMessage, UserMessage, BotMessage } from '@/components/message'
 import { Chat } from '@/lib/types'
 import { auth } from '@/auth'
 
-import { getPrompt } from '@/app/api/getDataFromKV'
+import { getChatLanguage, setMsgTranslation, getPrompt } from '@/app/api/getDataFromKV'
 
 
 const openai = new OpenAI({
@@ -31,8 +31,14 @@ async function submitUserMessage(content: string, type: string) {
 
   const aiState = getMutableAIState<typeof AI>()
 
-  const translateMessage = async (text: string) => {
-    return 'this should be translation of: '+text;
+  const translateMessage = async (text: string, id: string) => {
+
+    const language = await getChatLanguage(aiState.get().chatId);
+    const message = "this should be "+language+ " translation of: "+text;
+
+    setMsgTranslation(id, message);
+    
+    return message;
   }
 
   aiState.update({
@@ -74,9 +80,11 @@ async function submitUserMessage(content: string, type: string) {
 
       if (done) {
         textStream.done()
-        const translatedMessage = await translateMessage(content); // Placeholder for translation function
-
         const newId = nanoid();
+
+        const translatedMessage = await translateMessage(content, newId); // Placeholder for translation function
+
+        
 
         aiState.done({
           ...aiState.get(),

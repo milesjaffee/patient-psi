@@ -67,6 +67,7 @@ export async function getMsgTranslation(msgId: string): Promise<string | null> {
     const userID = await getUserID();
     const msgTranslationKey = `msg_${msgId}_${userID}`;
     const translation = await kv.get(msgTranslationKey);
+    console.log('getMsgTranslation', msgId, translation);
     return translation ? translation as string : null;
 }
 
