@@ -58,7 +58,7 @@ export function BotMessage({
     getMsgTranslation(id)
       .then((translation) => {
         if (translation) {
-          setShownText(translation);
+          setShownText(translation[0] as string);
         } else {
           setShownText(content as string);
         }
