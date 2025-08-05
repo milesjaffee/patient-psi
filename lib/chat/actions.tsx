@@ -20,6 +20,7 @@ import { auth } from '@/auth'
 
 import { getChatLanguage, setMsgTranslation, getPrompt } from '@/app/api/getDataFromKV'
 
+import { Translate } from '@google-cloud/translate/build/src/v2';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || ''
@@ -30,13 +31,14 @@ async function submitUserMessage(content: string, type: string) {
   'use server'
 
   const aiState = getMutableAIState<typeof AI>()
+  const translate = new Translate();
 
   const translateMessage = async (text: string, id: string) => {
 
     const language = await getChatLanguage(aiState.get().chatId);
-    const message = "this should be "+language+ " translation of: "+text;
+    const message = await translate.translate(text, language as string);
 
-    setMsgTranslation(id, message);
+    setMsgTranslation(id, message as unknown as string);
     
     return message;
   }
@@ -102,7 +104,7 @@ async function submitUserMessage(content: string, type: string) {
           }
         })
 
-        textNode = <BotMessage content={content} isDone={done} translation={translatedMessage} id={newId}/>
+        textNode = <BotMessage content={content} isDone={done} id={newId}/>
         botResponse = content
 
       } else {

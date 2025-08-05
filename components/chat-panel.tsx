@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useEffect } from 'react'
 
 import { shareChat } from '@/app/actions'
 import { Button } from '@/components/ui/button'
@@ -115,20 +116,32 @@ export function ChatPanel({
     
   }
 
-  if (id) getChatLanguage(id).then((chatLang) => {
-    console.log('ChatPanel getChatLanguage:', chatLang, 'for chat ID:', id);
-    if (!chatLang && messages.length === 0) {
-      console.log('Setting chat language from KV:', language);
-      //setInput(''); // Clear input to avoid confusion
-      setChatLanguage(id, language); // Update chat language in KV
-    }
-    else if (chatLang) {
-      console.log('Chat language from KV:', chatLang);
-      if (chatLang !== language) {
-        console.warn(`Chat language mismatch: KV=${chatLang}, Current=${language}`);
+  useEffect(() => {
+  if (!id) return;
+
+  const fetchChatLanguage = async () => {
+    try {
+      const chatLang = await getChatLanguage(id);
+      console.log('ChatPanel getChatLanguage:', chatLang, 'for chat ID:', id, "with messages:", messages.length);
+
+      if (!chatLang && messages.length === 0) {
+        console.log('Setting chat language from KV:', language);
+        //setInput(''); // Clear input to avoid confusion
+        await setChatLanguage(id, language); // Update chat language in KV
       }
+      else if (chatLang) {
+        //console.log('Chat language from KV:', chatLang);
+        if (chatLang !== language) {
+          console.warn(`Chat language mismatch: KV=${chatLang}, Current=${language}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error handling chat language:', error);
     }
-  });
+  };
+
+  fetchChatLanguage();
+}, [id, language, messages.length]); 
 
   
   // const exampleMessages: any[] = []

@@ -43,7 +43,7 @@ export function StartSession({ onStartedChange, onSetPatientProfile }: StartSess
 
     const handleSetdPatientProfile = (patientProfile: PatientProfile) => {
         setPatientProfile(patientProfile);
-        console.log(patientProfile);
+        //console.log(patientProfile);
     }
 
     useEffect(() => {

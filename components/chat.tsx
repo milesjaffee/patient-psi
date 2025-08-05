@@ -70,8 +70,8 @@ export function Chat({ id, className, session, language, missingKeys }: ChatProp
 
   const handleSetPatientProfile = (patientProfile: PatientProfile) => {
     setPatientProfile(patientProfile);
-    console.log("profile");
-    console.log(patientProfile);
+    //console.log("profile");
+    //console.log(patientProfile);
   }
 
 
