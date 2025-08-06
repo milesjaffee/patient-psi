@@ -43,7 +43,6 @@ export function BotMessage({
   content,
   isDone,
   className,
-  translation, //deprecated i think
   id,
 }: {
   content: string | StreamableValue<string>
@@ -52,7 +51,7 @@ export function BotMessage({
   translation?: string
   id?: string
 }) {
-  const [ shownText, setShownText ] = useState(content as string);
+  const [ shownText, setShownText ] = useState('Loading...');
   useEffect(() => {
   if (id) {
     getMsgTranslation(id)

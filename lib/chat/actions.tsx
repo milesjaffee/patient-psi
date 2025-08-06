@@ -37,7 +37,7 @@ async function submitUserMessage(content: string, type: string) {
 
     const language = await getChatLanguage(aiState.get().chatId);
 
-    if (language === 'en-US' || language === 'en') {
+    if (!language || language === 'en-US' || language === 'en') {
       return text; // No translation needed
     }
     const message = await translate.translate(text, language as string);
