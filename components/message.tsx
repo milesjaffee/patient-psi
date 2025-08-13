@@ -116,7 +116,7 @@ export function BotMessage({
 
 
               // this code part seems to be unnecessary
-              code({ node, inline, className, children, ...props }) {
+              /*code({ node, inline, className, children, ...props }) {
                 if (children.length) {
                   if (children[0] == '▍') {
                     return (
@@ -145,7 +145,7 @@ export function BotMessage({
                     {...props}
                   />
                 )
-              }
+              }*/
               // end of code part
 
             }}
