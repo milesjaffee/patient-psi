@@ -124,7 +124,7 @@ export function ChatPanel({
       const chatLang = await getChatLanguage(id);
       console.log('ChatPanel getChatLanguage:', chatLang, 'for chat ID:', id, "with messages:", messages.length);
 
-      if (!chatLang && messages.length === 0) {
+      if (!chatLang && language) {
         console.log('Setting chat language from KV:', language);
         //setInput(''); // Clear input to avoid confusion
         await setChatLanguage(id, language); // Update chat language in KV

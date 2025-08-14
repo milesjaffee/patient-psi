@@ -207,7 +207,6 @@ export const getUIStateFromAIState = (aiState: Chat) => {
           <BotMessage 
             content={message.content} 
             isDone={true} 
-            translation={aiState.translations?.[message.id]} 
             id={message.id}
           />
         )

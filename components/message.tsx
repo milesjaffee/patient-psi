@@ -59,6 +59,7 @@ export function BotMessage({
         if (translation) {
           setShownText(translation[0] as string);
         } else {
+          
           setShownText(content as string);
         }
       })
@@ -111,7 +112,9 @@ export function BotMessage({
             remarkPlugins={[remarkGfm, remarkMath]}
             components={{
               p({ children }) {
-                return <p className="mb-2 last:mb-0">{children}</p>
+                return <p className="mb-2 last:mb-0">{children
+                  }
+                </p>
               },
 
 
