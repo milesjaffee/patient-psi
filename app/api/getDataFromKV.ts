@@ -89,6 +89,22 @@ export async function getChatLanguage(chatId: string): Promise<string | null> {
     return language ? language as string : null;
 }
 
+export async function setChatSummary(chatId: string, language: string) {
+    try {
+        const userID = await getUserID();
+        const chatLanguageKey = `chat_summary_${chatId}_${userID}`;
+        await kv.set(chatLanguageKey, language);
+    } catch (error) {
+        console.error('Error storing chat language to KV:', error);
+    }
+}
+
+export async function getChatSummary(chatId: string): Promise<string | null> {
+    const userID = await getUserID();
+    const chatLanguageKey = `chat_summary_${chatId}_${userID}`;
+    const language = await kv.get(chatLanguageKey);
+    return language ? language as string : null;
+}
 
 
 // Random sample
@@ -202,7 +218,7 @@ async function formatPromptString(data: any): Promise<string> {
     5. Engage in a dynamic and interactive conversation with the therapist. Respond to their questions and prompts in a way that feels authentic and true to ${data.name}'s character. Allow the conversation to flow naturally, and avoid providing abrupt or disconnected responses.\n
     6. VERY IMPORTANT: Respond only in English, no matter what language the therapist addresses you in.\n
 
-    You are now ${data.name}. Respond to the therapist's prompts as ${data.name} would, regardless of the specific questions asked. Limit each of your responses to a maximum of 5 sentences. If the therapist begins the conversation with a greeting like "Hi," initiate the conversation as the patient.`;
+    You are now ${data.name}. Respond to the therapist's prompts in English as ${data.name} would, regardless of the specific questions asked. Limit each of your responses to a maximum of 5 sentences. If the therapist begins the conversation with a greeting like "Hi," initiate the conversation as the patient.`;
 
     console.log(prompt);
     return prompt;

@@ -68,6 +68,8 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
     const [savedCCDResult, setSavedCCDResult] = useState<CCDResult | null>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [patientType, setPatientType] = useState('');
+    const [summary, setSummary] = useState('');
+    const [showSummary, setShowSummary] = useState(false);
     const initialInputValues: InputValues = {
         ...Object.fromEntries([...diagramRelated, ...diagramCCD].map(name => [name, ''])),
         checkedHelpless: [],
@@ -218,6 +220,11 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     };
 
                     // Create a blob with the enriched chat data
+                    
+
+                    setSummary(getSummary(enrichedChatData));
+
+                    enrichedChatData['summary'] = summary;
                     const blob = new Blob([JSON.stringify(enrichedChatData, null, 2)], { type: 'application/json' });
 
                     // Create a link element to trigger the download
@@ -242,6 +249,12 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         } catch (error) {
             console.error('Error saving input values to KV database:', error);
         }
+    };
+
+    const getSummary = (data: any): string => {
+
+        return 'sum placeholder!';
+
     };
 
     return (
@@ -354,13 +367,27 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     </div>
                 ))}
             </div>
-            <div className="flex justify-end p-4">
-                <button
+            <div className="flex-col justify-end p-4">
+                <div><button
                     className="text-sm font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-red-500 text-sm font-semibold text-white"
                     onClick={handleSubmit}
                 >
                     Submit and review answers
-                </button>
+                </button></div>
+
+                {isSubmitted && <div><button
+                    className="text-sm font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-blue-500 text-sm font-semibold text-white mt-3"
+                    onClick={() => setShowSummary(!showSummary)}
+                >
+                    Show Summary
+                </button></div>}
+
+                {summary && showSummary && 
+                
+                <div className="mt-4 p-4 bg-gray-100 rounded-md">
+                    <h2 className="text-lg font-bold mb-2">Summary</h2>
+                    <p>{summary}</p>    
+                </div>}
             </div>
         </div>
     );
