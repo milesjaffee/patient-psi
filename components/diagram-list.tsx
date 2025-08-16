@@ -10,6 +10,8 @@ import { CCDResult, CCDTruth } from '@/lib/types'
 import { getCCDResult, getCCDTruth, saveCCDResult, saveCCDTruth } from '@/app/actions'
 import { PatientProfile, initialProfile } from '@/app/api/data/patient-profiles'
 
+import { getChatSummary, setChatSummary } from '@/app/api/getDataFromKV';
+
 
 // Before
 async function fetchPatientProfile(
@@ -222,7 +224,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     // Create a blob with the enriched chat data
                     
 
-                    setSummary(getSummary(enrichedChatData));
+                    setSummary(await getSummary(enrichedChatData));
 
                     enrichedChatData['summary'] = summary;
                     const blob = new Blob([JSON.stringify(enrichedChatData, null, 2)], { type: 'application/json' });
@@ -251,10 +253,23 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         }
     };
 
-    const getSummary = (data: any): string => {
+    const getSummary = async (data: any) => {
 
-        return 'sum placeholder!';
+        const summary = await getChatSummary(chatId);
+        if (summary) {
+            return summary;
+        } else {
+            const newSummary = await createSummary(data);
+            setChatSummary(chatId, newSummary);
+            return newSummary;
+        }
 
+    };
+
+    const createSummary = async (data: any) => {
+        // Here you would implement the logic to create a summary based on the data
+        // For now, we will return a placeholder string
+        return `Summary for chat ${data.chatId} with user ${data.userId}`;
     };
 
     return (

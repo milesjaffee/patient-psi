@@ -89,11 +89,11 @@ export async function getChatLanguage(chatId: string): Promise<string | null> {
     return language ? language as string : null;
 }
 
-export async function setChatSummary(chatId: string, language: string) {
+export async function setChatSummary(chatId: string, summary: string) {
     try {
         const userID = await getUserID();
-        const chatLanguageKey = `chat_summary_${chatId}_${userID}`;
-        await kv.set(chatLanguageKey, language);
+        const chatSummaryKey = `chat_summary_${chatId}_${userID}`;
+        await kv.set(chatSummaryKey, summary);
     } catch (error) {
         console.error('Error storing chat language to KV:', error);
     }
@@ -101,9 +101,9 @@ export async function setChatSummary(chatId: string, language: string) {
 
 export async function getChatSummary(chatId: string): Promise<string | null> {
     const userID = await getUserID();
-    const chatLanguageKey = `chat_summary_${chatId}_${userID}`;
-    const language = await kv.get(chatLanguageKey);
-    return language ? language as string : null;
+    const chatSummaryKey = `chat_summary_${chatId}_${userID}`;
+    const summary = await kv.get(chatSummaryKey);
+    return summary ? summary as string : null;
 }
 
 
