@@ -88,9 +88,7 @@ async function submitUserMessage(content: string, type: string) {
         textStream.done()
         const newId = nanoid();
 
-        const translatedMessage = await translateMessage(content, newId); // Placeholder for translation function
-
-        
+        const translatedMessage = await translateMessage(content, newId); // Placeholder for translation function    
 
         aiState.done({
           ...aiState.get(),

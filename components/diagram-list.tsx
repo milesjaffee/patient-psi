@@ -12,7 +12,6 @@ import { PatientProfile, initialProfile } from '@/app/api/data/patient-profiles'
 
 import { getChatSummary, setChatSummary } from '@/app/api/getDataFromKV';
 
-
 // Before
 async function fetchPatientProfile(
     setPatientProfile: (patientProfile: PatientProfile) => void) {
@@ -224,9 +223,9 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     // Create a blob with the enriched chat data
                     
 
-                    setSummary(await getSummary(enrichedChatData));
+                    setSummary(await getSummary(enrichedChatData) as string);
 
-                    enrichedChatData['summary'] = summary;
+                    //enrichedChatData['summary'] = summary;
                     const blob = new Blob([JSON.stringify(enrichedChatData, null, 2)], { type: 'application/json' });
 
                     // Create a link element to trigger the download
@@ -253,23 +252,29 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         }
     };
 
-    const getSummary = async (data: any) => {
+    const getSummary = async (data: JSON) => {
 
-        const summary = await getChatSummary(chatId);
-        if (summary) {
-            return summary;
+        console.log("getSummary called with data:", data);
+
+        const sum = await getChatSummary(chatId);
+        if (false) { //sum
+            return sum;
         } else {
-            const newSummary = await createSummary(data);
-            setChatSummary(chatId, newSummary);
-            return newSummary;
+            const res = await fetch('/api/summary', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({data})
+            })
+            /*if (!res.ok) {
+                throw new Error('Failed to fetch summary from OpenAI');
+            }*/
+            const response = await res.json()
+            setChatSummary(chatId, response);
+            return JSON.stringify(response);
         }
 
-    };
-
-    const createSummary = async (data: any) => {
-        // Here you would implement the logic to create a summary based on the data
-        // For now, we will return a placeholder string
-        return `Summary for chat ${data.chatId} with user ${data.userId}`;
     };
 
     return (
