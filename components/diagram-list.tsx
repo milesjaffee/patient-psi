@@ -271,8 +271,8 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                 throw new Error('Failed to fetch summary from OpenAI');
             }*/
             const response = await res.json()
-            setChatSummary(chatId, response);
-            return JSON.stringify(response);
+            setChatSummary(chatId, response.text_output || response);
+            return JSON.stringify(response.text_output || response);
         }
 
     };
@@ -386,7 +386,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                         }
                     </div>
                 ))}
-            </div>
+
             <div className="flex-col justify-end p-4">
                 <div><button
                     className="text-sm font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-red-500 text-sm font-semibold text-white"
@@ -409,6 +409,9 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     <p>{summary}</p>    
                 </div>}
             </div>
+
+            </div>
+            
         </div>
     );
 }

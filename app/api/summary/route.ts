@@ -12,21 +12,27 @@ export async function POST(req: NextRequest) {
 
     console.log("Received data for summary:", data);
 
-    const inputString = `You are a helpful assistant. Your task is to summarize the following psychological chat data. 'U' is the therapist, and 'A' is the patient. The summary should be concise and focus on the key points of the conversation, including any significant insights or developments in the patient's condition.\n
-        ${(data.messages).map((item: { role: string; content: string; }) => (`User: ${item.role[0]}, Message: ${item.content}\n`)).join('')}
-        \nYou may reference the patient's psychological profile: ${JSON.stringify(data.ccdTruth)}
+    const instructionString = `You are a helpful assistant. Your task is to summarize the following psychological chat data in a few sentences. \n
+    User 'U' is the therapist, and 'A' is the patient. The summary should be concise and focus on the key points of the conversation, including any significant insights or developments in the patient's condition.\n
+    \n(You may reference the patient's psychological profile, but only as supplemental material to the chat. Important: Avoid bringing up items from the profile that have not explicitly been shown in the chat! ${JSON.stringify(data.ccdTruth)}
+    
+        
     `;
 
-    console.log("Input String for OpenAI:", inputString);
+    const inputString = `${(data.messages).map((item: { role: string; content: string; }) => (`User: ${item.role[0]}, Message: ${item.content}\n`)).join('')}`;
+
+    console.log("Instructions String for OpenAI:", instructionString);
     
-    /*const completion = await openai.chat.completions.create({
-      messages,
-      model: "gpt-3.5-turbo",
-    })
+    const response = await openai.responses.create({
+      model: "gpt-5-nano",
+      instructions: instructionString,
+      input: inputString,
+      max_output_tokens: 750,
+  }); 
 
-    return NextResponse.json(completion.choices[0].message)*/
+    return NextResponse.json(response);
 
-    return NextResponse.json(inputString);
+    //return NextResponse.json(inputString);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
