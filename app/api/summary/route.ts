@@ -13,21 +13,16 @@ export async function POST(req: NextRequest) {
     console.log("Received data for summary:", data);
 
     const instructionString = `You are a helpful assistant. Your task is to summarize the following psychological chat data in a few sentences. \n
-    User 'U' is the therapist, and 'A' is the patient. The summary should be concise and focus on the key points of the conversation, including any significant insights or developments in the patient's condition.\n
-    \n(You may reference the patient's psychological profile, but only as supplemental material to the chat. Important: Avoid bringing up items from the profile that have not explicitly been shown in the chat! ${JSON.stringify(data.ccdTruth)}
-    
-        
-    `;
-
-    const inputString = `${(data.messages).map((item: { role: string; content: string; }) => (`User: ${item.role[0]}, Message: ${item.content}\n`)).join('')}`;
+  The summary should be concise and focus on the key points of the conversation, including any significant insights or developments in the patient's condition.\n
+    \n(You may reference the patient's psychological profile, but only as supplemental material to the chat. Important: Avoid bringing up items from the profile that have not explicitly been shown in the chat! ${JSON.stringify(data.ccdTruth)}    
+  \nChat: ${(data.messages).map((item: { role: string; content: string; }) => (`${item.role[0] == 'u' ? 'Therapist' : 'Patient'}: ${item.content}\n`)).join('')}`;
 
     console.log("Instructions String for OpenAI:", instructionString);
     
     const response = await openai.responses.create({
       model: "gpt-5-nano",
-      instructions: instructionString,
-      input: inputString,
-      max_output_tokens: 750,
+      input: instructionString,
+
   }); 
 
     return NextResponse.json(response);
