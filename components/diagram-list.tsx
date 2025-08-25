@@ -271,8 +271,8 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                 throw new Error('Failed to fetch summary from OpenAI');
             }*/
             const response = await res.json()
-            setChatSummary(chatId, response.output_text || response);
-            return JSON.stringify(response.output_text || response);
+            setChatSummary(chatId, response.choices[0].message.content || response.output_text || response);
+            return JSON.stringify(response.choices[0].message.content || response.output_text || response);
         }
 
     };
