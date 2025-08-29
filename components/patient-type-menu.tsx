@@ -1,5 +1,3 @@
-'use client';
-
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
@@ -7,9 +5,14 @@ import { useEffect, useState } from "react";
 import { patientTypes, patientTypeDescriptions } from "@/app/api/data/patient-types"
 import { PatientProfile, initialProfile } from '@/app/api/data/patient-profiles'
 
-import {LanguageDropdown} from "./language-dropdown"
+import { auth } from '@/auth'
+
+import { LanguageDropdown } from "@/components/language-dropdown"
+import { ContinueChat } from "@/components/continue-chat";
 
 // Call api/prompt/GET to fetch patient profile 
+
+
 async function fetchPatientProfile(
     setIsStarted: (isStarted: boolean) => void,
     setPatientProfile: (patientProfile: PatientProfile) => void) {
@@ -139,12 +142,17 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
                     We provide 5 typical client types and one plain client without any types. Please select a patient type to see the description.
                 </p>
                 <div className="max-w-6xl px-0">
-                    <div>
-                        <label className="block pt-4 text-sm font-medium leading-6">Please select a client type</label>
-                        <div className="flex items-center justify-start">
+                    <div className='flex-row flex'>
+                        
+                        <div className="flex-col items-center justify-start">
+                            <label className="block pt-4 text-sm font-medium leading-6">Please select a client type</label>
                             <div>
                                 <PatientTypeDropdownList typeList={patientTypeListValues} selectedType={selectedType} handleChoiceClick={handleChoiceClick} ></PatientTypeDropdownList>
                             </div>
+                        </div>
+                        <div>
+                            { //<ContinueChat/>
+                            }
                         </div>
                     </div>
                     {selectedType !== '' && (

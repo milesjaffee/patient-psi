@@ -12,22 +12,6 @@ import React from 'react'
 import { PatientProfile, initialProfile } from '@/app/api/data/patient-profiles'
 import { Stopwatch } from '@/components/stopwatch'
 
-
-const exampleMessages = [
-    {
-        heading: 'Explain technical concepts',
-        message: `What is a "serverless function"?`
-    },
-    {
-        heading: 'Summarize an article',
-        message: 'Summarize the following article for a 2nd grader: \n'
-    },
-    {
-        heading: 'Draft an email',
-        message: `Draft an email to my boss about the following: \n`
-    }
-]
-
 interface StartSessionProps {
     onStartedChange: (isStarted: boolean) => void;
     onSetPatientProfile: (selectedPatientName: PatientProfile) => void;

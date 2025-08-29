@@ -1,18 +1,19 @@
-import { getChats } from '@/app/actions'
-import { SidebarItems } from '@/components/sidebar-items'
-import { cache } from 'react'
+'use server';
 
-interface SidebarListProps {
-  userId?: string
-  children?: React.ReactNode
-}
+import { getChats } from '@/app/actions'
+import { ContinueChatItems } from '@/components/continue-chat-items'
+import { cache } from 'react'
+import { auth } from 'auth'
+
 
 const loadChats = cache(async (userId?: string) => {
   return await getChats(userId)
 })
 
-export async function ContinueChat({ userId }: SidebarListProps) {
-  const chats = await loadChats(userId) //this is the key!!
+export async function ContinueChat() {
+
+  const session = await auth();
+  const chats = (session && session.user)? await loadChats(session.user.id) : [] //this is the key!!
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
