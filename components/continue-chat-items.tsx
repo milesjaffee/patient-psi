@@ -17,6 +17,7 @@ export function ContinueChatItems({ chats }: SidebarItemsProps) {
         (chat, index) =>
           chat && (
             <div key={chat.id}>
+              {chat.title}
               <ContinueChatItem index={index} chat={chat}>
               </ContinueChatItem>
             </div>

@@ -1,14 +1,15 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { patientTypes, patientTypeDescriptions } from "@/app/api/data/patient-types"
 import { PatientProfile, initialProfile } from '@/app/api/data/patient-profiles'
 
 import { auth } from '@/auth'
 
 import { LanguageDropdown } from "@/components/language-dropdown"
-import { ContinueChat } from "@/components/continue-chat";
+import ContinueChat from "@/components/continue-chat";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 
 // Call api/prompt/GET to fetch patient profile 
 
@@ -130,6 +131,8 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
 
     }
 
+    const AsyncComponent = React.lazy(() => import('@/components/continue-chat'));
+
 
     return (
         <div>
@@ -141,8 +144,8 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
                 <p className="leading-normal pt-4 font-medium text-zinc-500">
                     We provide 5 typical client types and one plain client without any types. Please select a patient type to see the description.
                 </p>
-                <div className="max-w-6xl px-0">
-                    <div className='flex-row flex'>
+                <div className="max-w-6xl px-0 flex-row flex-1">
+                    <div className='flex-col flex max-w-xl'>
                         
                         <div className="flex-col items-center justify-start">
                             <label className="block pt-4 text-sm font-medium leading-6">Please select a client type</label>
@@ -150,11 +153,7 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
                                 <PatientTypeDropdownList typeList={patientTypeListValues} selectedType={selectedType} handleChoiceClick={handleChoiceClick} ></PatientTypeDropdownList>
                             </div>
                         </div>
-                        <div>
-                            { //<ContinueChat/>
-                            }
-                        </div>
-                    </div>
+                        
                     {selectedType !== '' && (
                         <div>
                             <p className="block pt-5 font-medium leading-6">
@@ -174,6 +173,14 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
                             )}
                         </div>
                     )}
+                    </div>
+                    <div className="flex-1">
+                            <ErrorBoundary>
+                                <Suspense fallback={<div>Loading...</div>}>
+                                <AsyncComponent />
+                                </Suspense>
+                            </ErrorBoundary>
+                        </div>
                 </div>
             </div>) : (<>
             </>)
