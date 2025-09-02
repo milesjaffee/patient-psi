@@ -12,6 +12,11 @@ import { PatientProfile, initialProfile } from '@/app/api/data/patient-profiles'
 
 import { getChatSummary, setChatSummary } from '@/app/api/getDataFromKV';
 
+import { useUIState, useActions } from 'ai/rsc';
+import { type AI } from '@/lib/chat/actions'
+import { nanoid } from 'nanoid';
+import { SystemMessage } from './message';
+
 // Before
 async function fetchPatientProfile(
     setPatientProfile: (patientProfile: PatientProfile) => void) {
@@ -81,6 +86,8 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
 
     const [inputValues, setInputValues] = useState<InputValues>(initialInputValues);
     const [isLoading, setIsLoading] = useState(true);
+
+    const [_, setMessages] = useUIState<typeof AI>()
 
 
     useEffect(() => {
@@ -277,6 +284,17 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
 
     };
 
+    const handleNewSession = async () => {
+        const systemMsg = "Session ends. A week has passed, and the patient has had some time to work on what they learned in the last session. We are at the beginning of a new therapy session.";
+        setMessages(currentMessages => [
+                  ...currentMessages,
+                  {
+                    id: nanoid(),
+                    display: <SystemMessage>{systemMsg}</SystemMessage>
+                  }
+                ])
+    }
+
     return (
         <div className="flex flex-col h-full">
 
@@ -387,16 +405,23 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     </div>
                 ))}
 
-            <div className="flex-col justify-end p-4">
+            <div className="flex-col justify-end p-4 space-between-3">
                 <div><button
-                    className="text-sm font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-red-500 text-sm font-semibold text-white"
+                    className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-red-500 text-sm font-semibold text-white"
                     onClick={handleSubmit}
                 >
                     Submit and review answers
                 </button></div>
 
+                <div><button
+                    className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-green-500 text-sm font-semibold text-white"
+                    onClick={handleNewSession}
+                >
+                    New session with patient
+                </button></div>
+
                 {isSubmitted && <div><button
-                    className="text-sm font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-blue-500 text-sm font-semibold text-white mt-3"
+                    className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-blue-500 text-sm font-semibold text-white mt-3"
                     onClick={() => setShowSummary(!showSummary)}
                 >
                     Show Summary
