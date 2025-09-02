@@ -24,13 +24,13 @@ export function ContinueChatItem({ index, chat, children }: SidebarItemProps) {
       <Link
         href={chat.path}
         className={cn(
-          'group h-full flex px-8 py-1 transition-colors hover:bg-zinc-200/40 dark:hover:bg-zinc-300/10',
+          'group h-full w-full flex px-1 py-1 transition-colors bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-300/40 dark:hover:bg-zinc-300/10',
         )}
       >
         <p
           className="text-m max-h-5 w-full flex-1 select-none overflow-hidden text-ellipsis break-all"
         >
-           {chat.title}
+          {chat.title}
         </p>
               {children && <div className="absolute right-2 top-1">{children}</div>}
       </Link>

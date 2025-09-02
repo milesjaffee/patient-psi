@@ -44,7 +44,7 @@ const PatientTypeDropdownList: React.FC<PatientTypeListProps> = ({ typeList, sel
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button className="relative flex h-[35px] w-[190px] items-center gap-x-1.5 rounded-md bg-background py-1.5 pl-3 pr-10 text-left text-sm font-semibold text-gray-900 shadow-sm ring-2 ring-inset ring-gray-900 hover:bg-accent hover:text-accent-foreground dark:text-white dark:ring-white">
+                <Button className="relative flex h-[35px] w-2xl items-center gap-x-1.5 rounded-md bg-background py-1.5 pl-3 pr-10 text-left text-sm font-semibold text-gray-900 shadow-sm ring-2 ring-inset ring-gray-900 hover:bg-accent hover:text-accent-foreground dark:text-white dark:ring-white">
                     <div className="grow text-left">
                         {selectedType}
                     </div>
@@ -135,7 +135,7 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
 
 
     return (
-        <div>
+        <div className="pb-3">
             {!isStarted ? (<div>
                 <p className="leading-normal pt-4 font-medium text-zinc-500">
                     In this CBT session, you will talk to a client simulated by AI with a virtual patient profile. You goal is to indentify the cognitive conceptualization diagram of the client by communicating with them and using CBT skills.
@@ -144,11 +144,11 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
                 <p className="leading-normal pt-4 font-medium text-zinc-500">
                     We provide 5 typical client types and one plain client without any types. Please select a patient type to see the description.
                 </p>
-                <div className="max-w-6xl px-0 flex-row flex-1">
-                    <div className='flex-col flex max-w-xl'>
+                <div className="grid grid-cols-2 mt-3">
+                    <div className="flex-col self-start flex">
                         
                         <div className="flex-col items-center justify-start">
-                            <label className="block pt-4 text-sm font-medium leading-6">Please select a client type</label>
+                            <label className="block text-sm font-medium leading-6">Please select a client type</label>
                             <div>
                                 <PatientTypeDropdownList typeList={patientTypeListValues} selectedType={selectedType} handleChoiceClick={handleChoiceClick} ></PatientTypeDropdownList>
                             </div>
@@ -156,7 +156,7 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
                         
                     {selectedType !== '' && (
                         <div>
-                            <p className="block pt-5 font-medium leading-6">
+                            <p className="pt-5 font-medium leading-6">
                                 {selectedTypeDescription}
                             </p>
                             <div>
@@ -174,7 +174,7 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
                         </div>
                     )}
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-col self-start flex">
                             <ErrorBoundary>
                                 <Suspense fallback={<div>Loading...</div>}>
                                 <AsyncComponent />
@@ -182,6 +182,7 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
                             </ErrorBoundary>
                         </div>
                 </div>
+                
             </div>) : (<>
             </>)
             }
