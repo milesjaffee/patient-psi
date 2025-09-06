@@ -267,7 +267,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         if (false) { //sum
             return sum;
         } else {
-            const res = await fetch('/api/summary', {
+            const res = await fetch('/api/feedback', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
