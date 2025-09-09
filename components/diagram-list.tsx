@@ -424,13 +424,13 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-blue-500 text-sm font-semibold text-white mt-3"
                     onClick={() => setShowSummary(!showSummary)}
                 >
-                    Show Summary
+                    Show Feedback
                 </button></div>}
 
                 {summary && showSummary && 
                 
                 <div className="mt-4 p-4 bg-gray-100 rounded-md">
-                    <h2 className="text-lg font-bold mb-2">Summary</h2>
+                    <h2 className="text-lg font-bold mb-2">Feedback</h2>
                     <p>{summary}</p>    
                 </div>}
             </div>
