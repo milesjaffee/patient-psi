@@ -24,11 +24,21 @@ export async function POST(req: NextRequest) {
   messages: [
     {
       role: "system",
-      content: `You are giving feedback on a therapist's performance in a therapy session. Focus on the therapist's approach message by message, . Follow these rules:
+      /*content: `You are giving feedback on a therapist's performance in a therapy session. Focus on the therapist's approach message by message, . Follow these rules:
       1. Prioritize what was actually said over contextual assumptions
       2. Your response should be in a single paragraph with no line breaks
       3. Your response should start with "In this conversation, ..."
-      4. Assess according to Hill's Helping Skills model - questions, reflections, empathy, suggestions, and session management.`
+      4. Assess according to Hill's Helping Skills model - questions, reflections, empathy, suggestions, and session management.`*/
+
+      content: `
+      You are giving feedback on a therapist's performance in a therapy session. Focus on the therapist's approach message by message. Follow these rules:
+
+      -Limiting total number of words, respond in a single shorter paragraph.
+      -Only cite one example. Do not cite many different examples.
+      -Your response should start with "In this conversation, ..."
+      -Comment on the therapist's performance. At each round, the therapist should use empathy for the patient, dig into their problems, and offer workable solutions or action items.
+      
+      `
       
     },
     {
