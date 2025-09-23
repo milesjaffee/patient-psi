@@ -24,7 +24,7 @@ export interface ChatProps extends React.ComponentProps<'div'> {
   missingKeys: string[]
 }
 
-export function Chat({ id, className, session, language, missingKeys }: ChatProps) {
+export function Chat({ id, className, session, missingKeys }: ChatProps) {
   const router = useRouter()
   const path = usePathname()
   const [input, setInput] = useState('')
@@ -81,6 +81,7 @@ export function Chat({ id, className, session, language, missingKeys }: ChatProp
         className="group ml-[-14%] w-full overflow-auto pl-0 peer-[[data-state=open]]:lg:pl-[250px] peer-[[data-state=open]]:xl:pl-[300px]"
         ref={scrollRef}
       >
+        
         {messages.length ? (
           <>
             <div className={cn('pb-[200px] pt-4 md:pt-10', className)} ref={messagesRef}>
@@ -100,10 +101,12 @@ export function Chat({ id, className, session, language, missingKeys }: ChatProp
           <>
             {!isStarted ? (
               <div className={cn('pb-[200px] pt-4 md:pt-10', className)} ref={messagesRef}>
+                
                 <StartSession
                   onStartedChange={handleStartedChange}
                   onSetPatientProfile={handleSetPatientProfile} />
               </div>
+             
             ) : (
               <>
                 <div className={cn('pb-[200px] pt-4 md:pt-10', className)} ref={messagesRef}>

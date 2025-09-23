@@ -357,10 +357,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     </div>
                 ))}
                 <hr className="my-4 border-gray-300" />
-                <label className="block leading-normal pt-4 font-medium">
-                    <span className="font-bold">Instructions: </span> {sessionInstructions["ccd"]}
-                </label>
-                {diagramRelated.map(name => (
+                {/*diagramRelated.map(name => (
                     <div key={name}>
                         <label className="block text-base font-bold mb-1">{diagramTitleMapping[name]}</label>
                         <label className="block pt-1 text-sm font-medium leading-6 text-zinc-500">
@@ -403,14 +400,14 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
 
                         }
                     </div>
-                ))}
+                ))*/}
 
             <div className="flex-col justify-end p-4 space-between-3">
                 <div><button
                     className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-red-500 text-sm font-semibold text-white"
                     onClick={handleSubmit}
                 >
-                    Submit and review answers
+                    Submit and get feedback
                 </button></div>
 
                 <div><button

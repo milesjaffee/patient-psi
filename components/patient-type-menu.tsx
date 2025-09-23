@@ -174,13 +174,13 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
                         </div>
                     )}
                     </div>
-                    <div className="flex-col self-start flex">
+                    {<div className="flex-col self-start flex">
                             <ErrorBoundary>
                                 <Suspense fallback={<div>Loading...</div>}>
                                 <AsyncComponent />
                                 </Suspense>
                             </ErrorBoundary>
-                        </div>
+                        </div>}
                 </div>
                 
             </div>) : (<>
