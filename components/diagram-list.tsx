@@ -87,8 +87,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
     const [inputValues, setInputValues] = useState<InputValues>(initialInputValues);
     const [isLoading, setIsLoading] = useState(true);
 
-    const [_, setMessages] = useUIState<typeof AI>()
-
+    const [messages, setMessages] = useUIState<typeof AI>()
 
     useEffect(() => {
         const fetchProfile = async () => {
