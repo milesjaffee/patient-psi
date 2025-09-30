@@ -138,7 +138,7 @@ export function PatientTypeMenu({ onStartedChange, onSetPatientProfile }: Patien
         <div className="pb-3">
             {!isStarted ? (<div>
                 <p className="leading-normal pt-4 font-medium text-zinc-500">
-                    In this CBT session, you will talk to a client simulated by AI with a virtual patient profile. You goal is to indentify the cognitive conceptualization diagram of the client by communicating with them and using CBT skills.
+                    In this CBT session, you will talk to a client simulated by AI with a virtual patient profile. Your goal is to identify the cognitive conceptualization diagram of the client by communicating with them and using CBT skills.
                 </p>
 
                 <p className="leading-normal pt-4 font-medium text-zinc-500">
