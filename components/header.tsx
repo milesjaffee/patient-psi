@@ -28,13 +28,13 @@ async function UserOrLogin() {
         </>
       ) : (
         <Link href="/" rel="nofollow">
-          <IconNextChat className="size-6 mr-2 dark:hidden" inverted />
+          <IconNextChat className="size-6 mr-2" inverted />
           <IconNextChat className="hidden size-6 mr-2 dark:block" />
         </Link>
       )}
       <div className="flex items-center">
         <Link href="/" rel="nofollow" className="flex-row">
-          <IconNextChat className="size-6 mr-2 dark:hidden" inverted />
+          <IconNextChat className="size-6 mr-2" inverted />
           
         </Link>
 

@@ -7,7 +7,7 @@ import { getMissingKeys } from '../actions'
 import { LanguageProvider } from '@/lib/hooks/use-language'
 
 export const metadata = {
-  title: 'Next.js AI Chatbot'
+  title: 'Patient Psi'
 }
 
 export default async function IndexPage() {
