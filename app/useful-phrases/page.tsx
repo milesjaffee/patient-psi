@@ -1,9 +1,12 @@
 'use client';
-import { LanguageDropdown } from '@/components/language-dropdown';
-import { useLanguage } from '@/lib/hooks/use-language';
+import { useState } from "react";
 
 export default function UsefulPhrases() {
-  const { language } = useLanguage();
+  const [ language, setLanguage ] = useState("es-ES");
+  const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setLanguage(event.target.value);
+    console.log('Language changed to:', event.target.value);
+  };
   const usefulPhrases = {
     "en-US": [
       "Hello",
@@ -54,8 +57,23 @@ export default function UsefulPhrases() {
         <h1 className="text-xl font-semibold">
           Useful Phrases in Each Language
         </h1>
-        <LanguageDropdown />
 
+
+    <select
+      value={language}
+      onChange={handleLanguageChange}
+      className="rounded-md border px-2 py-1"
+    >
+      <option value="en-US">English</option>
+      <option value="es-ES">Spanish (Español)</option>
+      <option value="fr-FR">French (Français)</option>
+      <option value="zh-CN">Chinese (中国人)</option>
+      <option value="de-DE">German (Deutsch)</option>
+      <option value="pt-PT">Portuguese (Português)</option>
+      <option value="ja-JP">Japanese (日本語)</option>
+      <option value="ru-RU">Russian (Русский)</option>
+    </select>
+      <div className="overflow-auto">
         <table className="table-auto border border-black">
 
             <thead>
@@ -65,20 +83,23 @@ export default function UsefulPhrases() {
               </tr>
             </thead>
             <tbody>
-              <tr className="border">
-                  <td>Hello</td>
-                  <td>{language === "es-ES" ? "Hola" : ""}</td>
-                  
-              </tr>
-               <tr className="border">
-                  <td>Some other stuff like a really long sentence maybe even the longest</td>
-                  <td>{language === "es-ES" ? "Hola hold hold I made it out of clay" : ""}</td>
-                  
-              </tr>
+              {
+                usefulPhrases["en-US"].map((phrase, index) => (
+                  <tr className="border border-black">
+                    <td className="border-r-2">
+                      {phrase}
+                    </td>
+                    <td>
+                      {usefulPhrases[language] ? usefulPhrases[language][index] : "Support for language not yet added!"}
+                    </td>
+                  </tr>
+                ))
+              }
             </tbody>
 
 
         </table>
+        </div>
     </div>
   );
 }
