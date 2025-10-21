@@ -1,13 +1,6 @@
-import { UseChatHelpers } from 'ai/react'
-
-import { Button } from '@/components/ui/button'
-import { ExternalLink } from '@/components/external-link'
-import { IconArrowRight } from '@/components/ui/icons'
-
 import { useState, useEffect } from 'react';
 import { PatientTypeMenu } from '@/components/patient-type-menu';
 
-import { useUIState, useAIState } from 'ai/rsc';
 import React from 'react'
 import { PatientProfile, initialProfile } from '@/app/api/data/patient-profiles'
 import { Stopwatch } from '@/components/stopwatch'
