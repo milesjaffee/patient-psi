@@ -1,5 +1,8 @@
 'use client';
 import { useState } from "react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@radix-ui/react-tooltip";
+import { Button } from "@/components/ui/button";
+import { IconSun } from "@/components/ui/icons";
 
 export default function UsefulPhrases() {
   const [ language, setLanguage ] = useState("es-ES");
@@ -7,6 +10,22 @@ export default function UsefulPhrases() {
     setLanguage(event.target.value);
     console.log('Language changed to:', event.target.value);
   };
+
+  const speak = (text: string, lang?: string) => {
+
+    if ('speechSynthesis' in window) {
+      //console.log("Available voices:", window.speechSynthesis.getVoices());
+      // console.log('Speaking:', text)
+      window.speechSynthesis.cancel() // Cancel any ongoing speech synthesis
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.lang = lang?? language;
+      utterance.rate = 1
+      window.speechSynthesis.speak(utterance)
+    } else {
+      console.error('TTS is not supported in this browser.')
+    }
+  }
+
   const usefulPhrases = {
     "en-US": [
       "Hello",
@@ -74,23 +93,61 @@ export default function UsefulPhrases() {
       <option value="ru-RU">Russian (Русский)</option>
     </select>
       <div className="overflow-auto">
-        <table className="table-auto border border-black">
+        <table className="table-fixed min-w-full border border-black">
 
             <thead>
               <tr>
-                <th>English</th>
-                <th>{language}</th>
+                <th className="w-1/2">English</th>
+                <th className="w-1/2">{language}</th>
               </tr>
             </thead>
             <tbody>
               {
                 usefulPhrases["en-US"].map((phrase, index) => (
                   <tr className="border border-black">
-                    <td className="border-r-2">
-                      {phrase}
+                    <td className="border-r-2 border-black">
+                      <div className="flex justify-between">
+                      <div>{phrase}</div>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                              type="button"
+                              size="icon"
+                              //title="Speak response"
+                              onClick={() => {
+                                console.log('Speak button clicked! Language: en-US');
+                                speak(phrase, 'en-US');
+                              }}
+                            >
+                          <IconSun /> {/* TODO: Make icon a speaker */}
+                          <span className="sr-only">Speak response</span>
+                        </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Speak response</TooltipContent>
+                      </Tooltip>
+                      </div>
                     </td>
                     <td>
-                      {usefulPhrases[language] ? usefulPhrases[language][index] : "Support for language not yet added!"}
+                      <div className="flex justify-between">
+                      <div>{usefulPhrases[language] ? usefulPhrases[language][index] : "Support for language not yet added!"} </div>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                              type="button"
+                              size="icon"
+                              //title="Speak response"
+                              onClick={() => {
+                                console.log('Speak button clicked! Language:', language);
+                                speak(usefulPhrases[language] ? usefulPhrases[language][index] : "Support for language not yet added!");
+                              }}
+                            >
+                          <IconSun /> {/* TODO: Make icon a speaker */}
+                          <span className="sr-only">Speak response</span>
+                        </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Speak response</TooltipContent>
+                      </Tooltip>
+                      </div>
                     </td>
                   </tr>
                 ))
