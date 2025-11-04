@@ -156,6 +156,16 @@ export default function UsefulPhrases() {
 
 
         </table>
+        {
+          language === 'es-ES' ? <div>
+            <h2 className="font-semibold">More Useful Resources</h2>
+            <div className="text-blue-500"><a href="https://commongroundinternational.com/medical-spanish/mental-health-conversations-in-spanish/">Mental Health Conversations in Spanish</a>
+            </div>
+            <div className="text-blue-500"><a href="https://commongroundinternational.com/medical-spanish/mental-health-conversation-in-spanish-listening-comprehension/">Mental Health Conversations in Spanish: Listening Comprehension</a>
+            </div>
+          </div> : <div></div>
+
+        }
         </div>
     </div>
   );

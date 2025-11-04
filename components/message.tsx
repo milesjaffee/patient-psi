@@ -101,8 +101,8 @@ export function BotMessage({
   }, [isDone])*/
 
   return (
-    <div className={cn('group relative flex items-start md:-ml-12', className)}>
-      <div className="flex size-[24px] shrink-0 select-none items-center justify-center rounded-md border bg-primary text-primary-foreground shadow-sm">
+    <div className={cn('group relative flex items-start md:-ml-12 bg-gradient-to-r from-green-300 to-blue-300 rounded-lg', className)}>
+      <div className="flex size-[24px] shrink-0 select-none items-center justify-center rounded-lg border bg-primary text-primary-foreground shadow-sm">
         <IconOpenAI />
       </div>
       <div className="ml-4 flex-1 flex items-center space-y-2 overflow-hidden px-1">
@@ -211,7 +211,7 @@ export function SystemMessage({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={
-        'mt-2 flex items-center justify-center gap-2 text-gray-500 bg-zinc-100'
+        'mt-2 flex items-center justify-center gap-2 text-gray-800 bg-gradient-to-l from-green-300 to-blue-300'
       }
     >
       <div className={'max-w-[600px] flex-initial p-2'}>{children}</div>
