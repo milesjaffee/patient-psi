@@ -6,13 +6,19 @@ import { IconSun } from "@/components/ui/icons";
 
 interface UsefulPhrasesProps {
     usefulPhrases: any;
+    phraseListNames: string[];
 }
 
-export default function UsefulPhrasesPage({usefulPhrases}: UsefulPhrasesProps) {
+export default function UsefulPhrasesPage({usefulPhrases, phraseListNames}: UsefulPhrasesProps) {
   const [ language, setLanguage ] = useState("es-ES");
+  const [ phraseList, setPhraseList ] = useState(0);
   const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setLanguage(event.target.value);
     console.log('Language changed to:', event.target.value);
+  };
+  const handlePhraseListChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setPhraseList(event.target.value);
+    console.log('PhraseList changed to:', event.target.value);
   };
 
   const speak = (text: string, lang?: string) => {
@@ -35,12 +41,15 @@ export default function UsefulPhrasesPage({usefulPhrases}: UsefulPhrasesProps) {
         <h1 className="text-xl font-semibold">
           Useful Phrases in Each Language
         </h1>
+         <p className="leading-normal pt-4 font-medium text-zinc-500">
+                    Use the first dropdown to select the target language and the second to select the topic (sample phrases addressing {phraseListNames.length} important subject matters are included!)
+                </p>
 
 
     <select
       value={language}
       onChange={handleLanguageChange}
-      className="rounded-md border px-2 py-1"
+      className="rounded-md border px-2 py-1 bg-background"
     >
       <option value="en-US">English</option>
       <option value="es-ES">Spanish (Español)</option>
@@ -50,6 +59,18 @@ export default function UsefulPhrasesPage({usefulPhrases}: UsefulPhrasesProps) {
       <option value="pt-PT">Portuguese (Português)</option>
       <option value="ja-JP">Japanese (日本語)</option>
       <option value="ru-RU">Russian (Русский)</option>
+    </select>
+    <select
+      value={phraseListNames[phraseList+1]}
+      onChange={handlePhraseListChange}
+      className="rounded-md border px-2 py-1 bg-background"
+    >
+    {
+      phraseListNames.map((listName, index) => (
+        <option value={index} key={index}>{listName}</option>
+
+      ))
+    }
     </select>
       <div className="overflow-auto">
         <table className="table-fixed min-w-full border border-black">
@@ -62,7 +83,7 @@ export default function UsefulPhrasesPage({usefulPhrases}: UsefulPhrasesProps) {
             </thead>
             <tbody>
               {
-                usefulPhrases["en-US"].map((phrase, index) => (
+                usefulPhrases[phraseList]["en-US"].map((phrase, index) => (
                   <tr className="border border-black">
                     <td className="border-r-2 border-black">
                       <div className="flex justify-between">
@@ -88,7 +109,7 @@ export default function UsefulPhrasesPage({usefulPhrases}: UsefulPhrasesProps) {
                     </td>
                     <td>
                       <div className="flex justify-between">
-                      <div>{usefulPhrases[language] ? usefulPhrases[language][index] : "Support for language not yet added!"} </div>
+                      <div>{usefulPhrases[phraseList][language] ? usefulPhrases[phraseList][language][index] : "Support for language not yet added!"} </div>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
@@ -97,7 +118,7 @@ export default function UsefulPhrasesPage({usefulPhrases}: UsefulPhrasesProps) {
                               //title="Speak response"
                               onClick={() => {
                                 console.log('Speak button clicked! Language:', language);
-                                speak(usefulPhrases[language] ? usefulPhrases[language][index] : "Support for language not yet added!");
+                                speak(usefulPhrases[phraseList][language] ? usefulPhrases[phraseList][language][index] : "Support for language not yet added!");
                               }}
                             >
                           <IconSun /> {/* TODO: Make icon a speaker */}
