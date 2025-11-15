@@ -284,29 +284,100 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
 
     };
 
-    const getAnalysis = async (data: JSON) => {
+    const getAnalysis = async () => {
+        // Create and show a full-page dummy modal
+        const createModal = () => {
+            const modal = document.createElement('div');
+            modal.id = 'dummy-analysis-modal';
+            Object.assign(modal.style, {
+                position: 'fixed',
+                top: '0',
+                left: '0',
+                width: '100vw',
+                height: '100vh',
+                backgroundColor: 'rgba(0,0,0,0.6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: '999',
+            });
 
-        console.log("getAnalysis called with data:", data);
+            const inner = document.createElement('div');
+            inner.className = 'dummy-analysis-content';
+            Object.assign(inner.style, {
+                background: 'white',
+                padding: '24px',
+                borderRadius: '8px',
+                maxWidth: '90%',
+                maxHeight: '80%',
+                overflow: 'auto',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                textAlign: 'center',
+            });
 
-        const analysis = await getChatAnalysis(chatId);
-        if (false) { //sum
-            return analysis;
-        } else {
-            const res = await fetch('/api/analysis', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({data})
-            })
-            /*if (!res.ok) {
-                throw new Error('Failed to fetch summary from OpenAI');
-            }*/
-            const response = await res.json()
-            setChatAnalysis(chatId, response.choices[0].message.content || response.output_text || response);
-            return JSON.stringify(response.choices[0].message.content || response.output_text || response);
+            inner.innerHTML = `<h2 style="margin:0 0 12px">Conversation Analysis</h2>
+                               <p style="margin:0 0 12px">Analyzing conversation... please wait.</p>
+                               <div class="dummy-analysis-result" style="text-align:left; white-space:pre-wrap; font-family:monospace;"></div>
+                               <div style="margin-top:12px">
+                                 <button class="dummy-analysis-close" style="padding:8px 12px;border-radius:6px;border:none;background:#333;color:#fff;cursor:pointer;">Close</button>
+                               </div>`;
+
+            modal.appendChild(inner);
+            document.body.appendChild(modal);
+
+            const closeBtn = inner.querySelector('.dummy-analysis-close') as HTMLButtonElement;
+            closeBtn.addEventListener('click', () => {
+                if (modal.parentNode) modal.parentNode.removeChild(modal);
+            });
+
+            return { modal, resultContainer: inner.querySelector('.dummy-analysis-result') as HTMLElement };
+        };
+
+        const escapeHtml = (str: string) =>
+            str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+        const { modal, resultContainer } = createModal();
+
+        try {
+            const response = await fetch(`/api/export-chat?userId=${userId}&chatId=${chatId}`);
+            const chatdata = await response.json();
+
+            console.log("getAnalysis called with data:", chatdata);
+
+            const analysis = await getChatAnalysis(chatId);
+            if (false) { // existing branch preserved
+                return analysis;
+            } else {
+                const res = await fetch('/api/analysis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ chatdata })
+                });
+
+                const json = await res.json();
+                const content = responseFormat(json);
+
+                // display analysis in the modal
+                resultContainer.innerHTML = escapeHtml(content);
+
+                // save into KV
+                setChatAnalysis(chatId, content);
+                return JSON.stringify(content);
+            }
+        } catch (error) {
+            console.error('Error during analysis:', error);
+            resultContainer.innerText = 'Error during analysis. Check console for details.';
+            throw error;
         }
 
+        // helper to extract text from OpenAI-like response
+        function responseFormat(resp: any) {
+            return resp?.choices?.[0]?.message?.content
+                || resp?.output_text
+                || JSON.stringify(resp, null, 2);
+        }
     };
 
     const handleNewSession = async () => {
@@ -381,7 +452,6 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                         </div>)}
                     </div>
                 ))}
-                <hr className="my-4 border-gray-300" />
                 {/*diagramRelated.map(name => (
                     <div key={name}>
                         <label className="block text-base font-bold mb-1">{diagramTitleMapping[name]}</label>
@@ -428,6 +498,13 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                 ))*/}
 
             <div className="flex-col justify-end p-4 space-between-3">
+                <div><button
+                    className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-black text-sm font-semibold text-white"
+                    onClick={getAnalysis}
+                >
+                    Conversation Analysis
+                </button></div>
+
                 <div><button
                     className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-red-500 text-sm font-semibold text-white"
                     onClick={handleSubmit}
