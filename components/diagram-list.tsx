@@ -10,7 +10,7 @@ import { CCDResult, CCDTruth } from '@/lib/types'
 import { getCCDResult, getCCDTruth, saveCCDResult, saveCCDTruth } from '@/app/actions'
 import { PatientProfile, initialProfile } from '@/app/api/data/patient-profiles'
 
-import { getChatSummary, setChatSummary } from '@/app/api/getDataFromKV';
+import { getChatSummary, setChatSummary, getChatAnalysis, setChatAnalysis } from '@/app/api/getDataFromKV';
 
 import { useUIState, useActions } from 'ai/rsc';
 import { type AI } from '@/lib/chat/actions'
@@ -75,6 +75,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [patientType, setPatientType] = useState('');
     const [summary, setSummary] = useState('');
+    const [analysis, setAnalysis] = useState('');
     const [showSummary, setShowSummary] = useState(false);
     const initialInputValues: InputValues = {
         ...Object.fromEntries([...diagramRelated, ...diagramCCD].map(name => [name, ''])),
@@ -171,7 +172,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
 
 
     if (isLoading) {
-        return <div>Loading...</div>;  // or any loading indicator
+        return <div>Loading patient mental state sidebar...</div>;  // or any loading indicator
     }
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>, name: string) => {
@@ -263,7 +264,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         console.log("getSummary called with data:", data);
 
         const sum = await getChatSummary(chatId);
-        if (false) { //sum
+        if (sum) { //sum
             return sum;
         } else {
             const res = await fetch('/api/feedback', {
@@ -278,6 +279,31 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
             }*/
             const response = await res.json()
             setChatSummary(chatId, response.choices[0].message.content || response.output_text || response);
+            return JSON.stringify(response.choices[0].message.content || response.output_text || response);
+        }
+
+    };
+
+    const getAnalysis = async (data: JSON) => {
+
+        console.log("getAnalysis called with data:", data);
+
+        const analysis = await getChatAnalysis(chatId);
+        if (false) { //sum
+            return analysis;
+        } else {
+            const res = await fetch('/api/analysis', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({data})
+            })
+            /*if (!res.ok) {
+                throw new Error('Failed to fetch summary from OpenAI');
+            }*/
+            const response = await res.json()
+            setChatAnalysis(chatId, response.choices[0].message.content || response.output_text || response);
             return JSON.stringify(response.choices[0].message.content || response.output_text || response);
         }
 
@@ -298,7 +324,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         <div className="flex flex-col h-full">
 
             <div className="flex items-center justify-between p-4 px-5">
-                <h4 className="text-lg font-bold">Patient Intake and Cognitive Conceptualization Diagram</h4>
+                <h4 className="text-lg font-bold">Patient Mental State and Feedback</h4>
             </div>
             <div className="mb-2 px-5 space-y-6 overflow-auto">
                 <label className="block pt-1 leading-normal font-medium">
@@ -416,7 +442,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     New session with patient
                 </button></div>
 
-                {isSubmitted && <div><button
+                {<div><button
                     className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-blue-500 text-sm font-semibold text-white mt-3"
                     onClick={() => setShowSummary(!showSummary)}
                 >

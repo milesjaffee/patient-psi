@@ -95,13 +95,30 @@ export async function setChatSummary(chatId: string, summary: string) {
         const chatSummaryKey = `chat_summary_${chatId}_${userID}`;
         await kv.set(chatSummaryKey, summary);
     } catch (error) {
-        console.error('Error storing chat language to KV:', error);
+        console.error('Error storing chat summary to KV:', error);
     }
 }
 
 export async function getChatSummary(chatId: string): Promise<string | null> {
     const userID = await getUserID();
     const chatSummaryKey = `chat_summary_${chatId}_${userID}`;
+    const summary = await kv.get(chatSummaryKey);
+    return summary ? summary as string : null;
+}
+
+export async function setChatAnalysis(chatId: string, summary: string) {
+    try {
+        const userID = await getUserID();
+        const chatSummaryKey = `chat_analysis_${chatId}_${userID}`;
+        await kv.set(chatSummaryKey, summary);
+    } catch (error) {
+        console.error('Error storing chat analysis to KV:', error);
+    }
+}
+
+export async function getChatAnalysis(chatId: string): Promise<string | null> {
+    const userID = await getUserID();
+    const chatSummaryKey = `chat_analysis_${chatId}_${userID}`;
     const summary = await kv.get(chatSummaryKey);
     return summary ? summary as string : null;
 }
