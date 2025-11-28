@@ -264,7 +264,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         console.log("getSummary called with data:", data);
 
         const sum = await getChatSummary(chatId);
-        if (sum) { //sum
+        if (false) { //sum
             return sum;
         } else {
             const res = await fetch('/api/feedback', {
@@ -284,7 +284,13 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
 
     };
 
-    const getAnalysis = async () => {
+    const makeAnalysis = async() => {
+        const response = await fetch(`/api/export-chat?userId=${userId}&chatId=${chatId}`);
+        const data = await response.json();
+        await getAnalysis(data);
+    }
+
+    const getAnalysis = async (data: JSON) => {
         // Create and show a full-page dummy modal
         const createModal = () => {
             const modal = document.createElement('div');
@@ -339,12 +345,13 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         const { modal, resultContainer } = createModal();
 
         try {
-            const response = await fetch(`/api/export-chat?userId=${userId}&chatId=${chatId}`);
-            const chatdata = await response.json();
+            //const response = await fetch(`/api/export-chat?userId=${userId}&chatId=${chatId}`);
+            //const chatdata = await response.json();
 
-            console.log("getAnalysis called with data:", chatdata);
+            console.log("getAnalysis called with data:", data);
 
             const analysis = await getChatAnalysis(chatId);
+
             if (false) { // existing branch preserved
                 return analysis;
             } else {
@@ -353,7 +360,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ chatdata })
+                    body: JSON.stringify({ data })
                 });
 
                 const json = await res.json();
@@ -500,7 +507,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
             <div className="flex-col justify-end p-4 space-between-3">
                 <div><button
                     className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-black text-sm font-semibold text-white"
-                    onClick={getAnalysis}
+                    onClick={makeAnalysis}
                 >
                     Conversation Analysis
                 </button></div>

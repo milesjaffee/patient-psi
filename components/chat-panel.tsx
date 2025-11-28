@@ -39,7 +39,7 @@ export function ChatPanel({
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false)
 
   const { language }: { language: string } = useLanguage();
-  console.log('ChatPanel language:', language);
+  //console.log('ChatPanel language:', language);
 
   const exampleMessages: Record<string, { heading: string; subheading: string; message: string }[]> = {
     "en-US": [ // English (US)
