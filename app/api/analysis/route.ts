@@ -26,19 +26,19 @@ export async function POST(req: NextRequest) {
 
       Format example (COPY THIS JSON FORMAT EXACTLY, ONLY CHANGE NUMBERS AND TEXT, ):
       {
-        effectiveness: 7,
-        patientSatisfaction: 8,
-        sensitivity: 10,
-        questionQuality: 5,
+        "effectiveness": 7,
+        "patientSatisfaction": 8,
+        "sensitivity": 10,
+        "questionQuality": 5,
 
-        resolutionLevel: 4,
-        empowerment: 6,
-        startingDistress: 5,
+        "resolutionLevel": 4,
+        "empowerment": 6,
+        "startingDistress": 5,
 
-        whatWorkedWell: "Several things the therapist did well.",
-        areasForImprovement: "Things the therapist could improve upon; missed opportunities for creating good moments.",
-        culturalConsiderations: "Cultural considerations unique to this particular patient's background.",
-        actionItems: "A list of specific action items (if any) the therapist has given to the patient in the chat to act on.",
+        "whatWorkedWell": "Several things the therapist did well.",
+        "areasForImprovement": "Things the therapist could improve upon; missed opportunities for creating good moments.",
+        "culturalConsiderations": "Cultural considerations unique to this particular patient's background.",
+        "actionItems": "A list of specific action items (if any) the therapist has given to the patient in the chat to act on.",
       }
       `
       //+ all extra metric except the last two

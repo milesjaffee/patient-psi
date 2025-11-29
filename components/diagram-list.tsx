@@ -223,7 +223,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     <h2 style={{ margin: 0, marginBottom: 12 }}>Conversation Analysis</h2>
                     <div
                         className="dummy-analysis-result"
-                        style={{ textAlign: 'left', whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}
+                        style={{ textAlign: 'left', whiteSpace: 'pre-wrap'}}
                     >
                         {/*
                           If callers set a React node via the provided API (resultContainer.render),
@@ -452,7 +452,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                 const content = responseFormat(json);
 
                 // display analysis in the modal
-                resultContainer.innerHTML = escapeHtml(content);
+                createFeedbackScreen(resultContainer, content);
 
                 // save into KV
                 setChatAnalysis(chatId, content);
@@ -474,10 +474,10 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
 
     const createFeedbackScreen = (resultContainer: any, analysis: string) => {
 
-        resultContainer.innerHTML = escapeHtml(analysis);
+        //resultContainer.innerHTML = escapeHtml(analysis);
 
         resultContainer.render(<>
-        <FeedbackScreen data={escapeHtml(analysis)} />
+        <FeedbackScreen data={analysis} />
     </>);
 
     }
