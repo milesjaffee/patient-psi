@@ -17,6 +17,9 @@ import { type AI } from '@/lib/chat/actions'
 import { nanoid } from 'nanoid';
 import { SystemMessage } from './message';
 
+import { createRoot } from 'react-dom/client';
+import { FeedbackScreen } from './feedback-screen';
+
 // Before
 async function fetchPatientProfile(
     setPatientProfile: (patientProfile: PatientProfile) => void) {
@@ -77,6 +80,14 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
     const [summary, setSummary] = useState('');
     const [analysis, setAnalysis] = useState('');
     const [showSummary, setShowSummary] = useState(false);
+
+        // Modal state and creator that controls a React-rendered modal instead of manipulating the DOM directly
+    const [analysisModalOpen, setAnalysisModalOpen] = useState(false);
+    const [analysisModalContent, setAnalysisModalContent] = useState<string>('Analyzing conversation... please wait.');
+    // New: allow storing a React node to render inside the modal
+    const [analysisModalNode, setAnalysisModalNode] = useState<React.ReactNode | null>(null);
+
+
     const initialInputValues: InputValues = {
         ...Object.fromEntries([...diagramRelated, ...diagramCCD].map(name => [name, ''])),
         checkedHelpless: [],
@@ -170,6 +181,86 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         fetchCCDTruth();
     }, [userId, chatId, patientProfile])
 
+        // Render the modal into body using react-dom's createRoot when open.
+    // We mount/unmount a small React tree so styling and interactions remain in React.
+    useEffect(() => {
+        if (!analysisModalOpen) return;
+
+        const container = document.createElement('div');
+        container.id = 'analysis-modal-root';
+        document.body.appendChild(container);
+        const root = createRoot(container);
+
+        const ModalNode = (
+            <div
+                id="dummy-analysis-modal"
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0,0,0,0.6)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 99,
+                }}
+            >
+                <div
+                    className="dummy-analysis-content"
+                    style={{
+                        background: 'white',
+                        padding: 24,
+                        borderRadius: 8,
+                        maxWidth: '90%',
+                        maxHeight: '80%',
+                        overflow: 'auto',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                        textAlign: 'center',
+                    }}
+                >
+                    <h2 style={{ margin: 0, marginBottom: 12 }}>Conversation Analysis</h2>
+                    <div
+                        className="dummy-analysis-result"
+                        style={{ textAlign: 'left', whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}
+                    >
+                        {/*
+                          If callers set a React node via the provided API (resultContainer.render),
+                          render that node. Otherwise fall back to the string content.
+                        */}
+                        {analysisModalNode ? (
+                            // If the node is a plain string, render as text; otherwise render the node.
+                            typeof analysisModalNode === 'string' ? (
+                                <div>{analysisModalNode}</div>
+                            ) : (
+                                <>{analysisModalNode}</>
+                            )
+                        ) : (
+                            // backward-compatible: show the string content
+                            <div>{analysisModalContent}</div>
+                        )}
+                    </div>
+                    <div style={{ marginTop: 12 }}>
+                        <button
+                            onClick={() => setAnalysisModalOpen(false)}
+                            style={{ padding: '8px 12px', borderRadius: 6, border: 'none', background: '#333', color: '#fff', cursor: 'pointer' }}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+
+        root.render(ModalNode);
+
+        return () => {
+            root.unmount();
+            if (container.parentNode) container.parentNode.removeChild(container);
+        };
+    }, [analysisModalOpen, analysisModalContent, analysisModalNode]);
+
 
     if (isLoading) {
         return <div>Loading patient mental state sidebar...</div>;  // or any loading indicator
@@ -190,6 +281,49 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         }));
     };
 
+
+
+    const createModal = () => {
+        // Open modal with initial content
+        setAnalysisModalContent('Analyzing conversation... please wait.');
+        setAnalysisModalOpen(true);
+
+        // Provide an object compatible with the existing usage:
+        // code currently does: resultContainer.innerHTML = ... and resultContainer.innerText = ...
+        const resultContainer: any = {};
+        Object.defineProperty(resultContainer, 'innerHTML', {
+            set: (val: string) => {
+                // caller will normally pass escaped HTML (escapeHtml before assignment)
+                // clear any previously-set React node
+                setAnalysisModalNode(null);
+                setAnalysisModalContent(val);
+            },
+        });
+        Object.defineProperty(resultContainer, 'innerText', {
+            set: (val: string) => {
+                setAnalysisModalNode(null);
+                setAnalysisModalContent(val);
+            },
+        });
+
+        // New API: allow callers to render React nodes into the modal
+        resultContainer.render = (node: React.ReactNode) => {
+            setAnalysisModalContent('');
+            setAnalysisModalNode(node);
+        };
+
+        // Return a simple modal handle (previous code expected an element, but we only need a close handle)
+        const modal = {
+            close: () => setAnalysisModalOpen(false),
+        };
+
+        return { modal, resultContainer };
+    };
+
+
+
+    const escapeHtml = (str: string) =>
+        str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
     const handleSubmit = async () => {
         try {
@@ -284,63 +418,13 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
 
     };
 
-    const makeAnalysis = async() => {
+    const handleAnalysis = async() => {
         const response = await fetch(`/api/export-chat?userId=${userId}&chatId=${chatId}`);
         const data = await response.json();
         await getAnalysis(data);
     }
 
     const getAnalysis = async (data: JSON) => {
-        // Create and show a full-page dummy modal
-        const createModal = () => {
-            const modal = document.createElement('div');
-            modal.id = 'dummy-analysis-modal';
-            Object.assign(modal.style, {
-                position: 'fixed',
-                top: '0',
-                left: '0',
-                width: '100vw',
-                height: '100vh',
-                backgroundColor: 'rgba(0,0,0,0.6)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: '999',
-            });
-
-            const inner = document.createElement('div');
-            inner.className = 'dummy-analysis-content';
-            Object.assign(inner.style, {
-                background: 'white',
-                padding: '24px',
-                borderRadius: '8px',
-                maxWidth: '90%',
-                maxHeight: '80%',
-                overflow: 'auto',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-                textAlign: 'center',
-            });
-
-            inner.innerHTML = `<h2 style="margin:0 0 12px">Conversation Analysis</h2>
-                               <p style="margin:0 0 12px">Analyzing conversation... please wait.</p>
-                               <div class="dummy-analysis-result" style="text-align:left; white-space:pre-wrap; font-family:monospace;"></div>
-                               <div style="margin-top:12px">
-                                 <button class="dummy-analysis-close" style="padding:8px 12px;border-radius:6px;border:none;background:#333;color:#fff;cursor:pointer;">Close</button>
-                               </div>`;
-
-            modal.appendChild(inner);
-            document.body.appendChild(modal);
-
-            const closeBtn = inner.querySelector('.dummy-analysis-close') as HTMLButtonElement;
-            closeBtn.addEventListener('click', () => {
-                if (modal.parentNode) modal.parentNode.removeChild(modal);
-            });
-
-            return { modal, resultContainer: inner.querySelector('.dummy-analysis-result') as HTMLElement };
-        };
-
-        const escapeHtml = (str: string) =>
-            str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
         const { modal, resultContainer } = createModal();
 
@@ -352,7 +436,8 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
 
             const analysis = await getChatAnalysis(chatId);
 
-            if (false) { // existing branch preserved
+            if (analysis) { // existing branch preserved
+                createFeedbackScreen(resultContainer, analysis);
                 return analysis;
             } else {
                 const res = await fetch('/api/analysis', {
@@ -387,15 +472,25 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         }
     };
 
+    const createFeedbackScreen = (resultContainer: any, analysis: string) => {
+
+        resultContainer.innerHTML = escapeHtml(analysis);
+
+        resultContainer.render(<>
+        <FeedbackScreen data={escapeHtml(analysis)} />
+    </>);
+
+    }
+
     const handleNewSession = async () => {
         const systemMsg = "Session ends. A week has passed, and the patient has had some time to work on what they learned in the last session. We are at the beginning of a new therapy session.";
-        setMessages(currentMessages => [
-                  ...currentMessages,
-                  {
-                    id: nanoid(),
-                    display: <SystemMessage>{systemMsg}</SystemMessage>
-                  }
-                ])
+        setMessages((currentMessages: any) => [
+                                    ...currentMessages,
+                                    {
+                                        id: nanoid(),
+                                        display: <SystemMessage>{systemMsg}</SystemMessage>
+                                    }
+                                ])
     }
 
     return (
@@ -507,7 +602,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
             <div className="flex-col justify-end p-4 space-between-3">
                 <div><button
                     className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-black text-sm font-semibold text-white"
-                    onClick={makeAnalysis}
+                    onClick={handleAnalysis}
                 >
                     Conversation Analysis
                 </button></div>

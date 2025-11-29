@@ -11,11 +11,7 @@ export async function POST(req: NextRequest) {
     const { data } = await req.json();
 
     console.log("Received data for Analysis feedback:", data);
-    console.log("Convo: ", 
-      `Conversation: ${(data.messages).map((item: { role: string; content: string; }) => (`${item.role[0] == 'u' ? 'Therapist' : item.role[0] == 'a' ? 'Patient' : 'SYSTEM'}: ${item.content}\n`)).join('')}
-     \n`);
-    
-    
+      
     const response = await openai.chat.completions.create({
   model: "gpt-5-nano",
   messages: [
@@ -39,12 +35,10 @@ export async function POST(req: NextRequest) {
         empowerment: 6,
         startingDistress: 5,
 
-        
-
         whatWorkedWell: "Several things the therapist did well.",
         areasForImprovement: "Things the therapist could improve upon; missed opportunities for creating good moments.",
         culturalConsiderations: "Cultural considerations unique to this particular patient's background.",
-        actionItems: "A list of specific action items the therapist has given to the patient to act on.",
+        actionItems: "A list of specific action items (if any) the therapist has given to the patient in the chat to act on.",
       }
       `
       //+ all extra metric except the last two
