@@ -10,12 +10,15 @@ import { CCDResult, CCDTruth } from '@/lib/types'
 import { getCCDResult, getCCDTruth, saveCCDResult, saveCCDTruth } from '@/app/actions'
 import { PatientProfile, initialProfile } from '@/app/api/data/patient-profiles'
 
-import { getChatSummary, setChatSummary } from '@/app/api/getDataFromKV';
+import { getChatSummary, setChatSummary, getChatAnalysis, setChatAnalysis } from '@/app/api/getDataFromKV';
 
 import { useUIState, useActions } from 'ai/rsc';
 import { type AI } from '@/lib/chat/actions'
 import { nanoid } from 'nanoid';
 import { SystemMessage } from './message';
+
+import { createRoot } from 'react-dom/client';
+import { FeedbackScreen } from './feedback-screen';
 
 // Before
 async function fetchPatientProfile(
@@ -75,7 +78,16 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [patientType, setPatientType] = useState('');
     const [summary, setSummary] = useState('');
+    const [analysis, setAnalysis] = useState('');
     const [showSummary, setShowSummary] = useState(false);
+
+        // Modal state and creator that controls a React-rendered modal instead of manipulating the DOM directly
+    const [analysisModalOpen, setAnalysisModalOpen] = useState(false);
+    const [analysisModalContent, setAnalysisModalContent] = useState<string>('Analyzing conversation... please wait.');
+    // New: allow storing a React node to render inside the modal
+    const [analysisModalNode, setAnalysisModalNode] = useState<React.ReactNode | null>(null);
+
+
     const initialInputValues: InputValues = {
         ...Object.fromEntries([...diagramRelated, ...diagramCCD].map(name => [name, ''])),
         checkedHelpless: [],
@@ -169,9 +181,89 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         fetchCCDTruth();
     }, [userId, chatId, patientProfile])
 
+        // Render the modal into body using react-dom's createRoot when open.
+    // We mount/unmount a small React tree so styling and interactions remain in React.
+    useEffect(() => {
+        if (!analysisModalOpen) return;
+
+        const container = document.createElement('div');
+        container.id = 'analysis-modal-root';
+        document.body.appendChild(container);
+        const root = createRoot(container);
+
+        const ModalNode = (
+            <div
+                id="dummy-analysis-modal"
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0,0,0,0.6)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 99,
+                }}
+            >
+                <div
+                    className="dummy-analysis-content"
+                    style={{
+                        background: 'white',
+                        padding: 24,
+                        borderRadius: 8,
+                        maxWidth: '90%',
+                        maxHeight: '80%',
+                        overflow: 'auto',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                        textAlign: 'center',
+                    }}
+                >
+                    <h2 style={{ margin: 0, marginBottom: 12 }}>Conversation Analysis</h2>
+                    <div
+                        className="dummy-analysis-result"
+                        style={{ textAlign: 'left', whiteSpace: 'pre-wrap'}}
+                    >
+                        {/*
+                          If callers set a React node via the provided API (resultContainer.render),
+                          render that node. Otherwise fall back to the string content.
+                        */}
+                        {analysisModalNode ? (
+                            // If the node is a plain string, render as text; otherwise render the node.
+                            typeof analysisModalNode === 'string' ? (
+                                <div>{analysisModalNode}</div>
+                            ) : (
+                                <>{analysisModalNode}</>
+                            )
+                        ) : (
+                            // backward-compatible: show the string content
+                            <div>{analysisModalContent}</div>
+                        )}
+                    </div>
+                    <div style={{ marginTop: 12 }}>
+                        <button
+                            onClick={() => setAnalysisModalOpen(false)}
+                            style={{ padding: '8px 12px', borderRadius: 6, border: 'none', background: '#333', color: '#fff', cursor: 'pointer' }}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+
+        root.render(ModalNode);
+
+        return () => {
+            root.unmount();
+            if (container.parentNode) container.parentNode.removeChild(container);
+        };
+    }, [analysisModalOpen, analysisModalContent, analysisModalNode]);
+
 
     if (isLoading) {
-        return <div>Loading...</div>;  // or any loading indicator
+        return <div>Loading patient mental state sidebar...</div>;  // or any loading indicator
     }
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>, name: string) => {
@@ -189,6 +281,49 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
         }));
     };
 
+
+
+    const createModal = () => {
+        // Open modal with initial content
+        setAnalysisModalContent('Analyzing conversation... please wait.');
+        setAnalysisModalOpen(true);
+
+        // Provide an object compatible with the existing usage:
+        // code currently does: resultContainer.innerHTML = ... and resultContainer.innerText = ...
+        const resultContainer: any = {};
+        Object.defineProperty(resultContainer, 'innerHTML', {
+            set: (val: string) => {
+                // caller will normally pass escaped HTML (escapeHtml before assignment)
+                // clear any previously-set React node
+                setAnalysisModalNode(null);
+                setAnalysisModalContent(val);
+            },
+        });
+        Object.defineProperty(resultContainer, 'innerText', {
+            set: (val: string) => {
+                setAnalysisModalNode(null);
+                setAnalysisModalContent(val);
+            },
+        });
+
+        // New API: allow callers to render React nodes into the modal
+        resultContainer.render = (node: React.ReactNode) => {
+            setAnalysisModalContent('');
+            setAnalysisModalNode(node);
+        };
+
+        // Return a simple modal handle (previous code expected an element, but we only need a close handle)
+        const modal = {
+            close: () => setAnalysisModalOpen(false),
+        };
+
+        return { modal, resultContainer };
+    };
+
+
+
+    const escapeHtml = (str: string) =>
+        str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
     const handleSubmit = async () => {
         try {
@@ -283,22 +418,86 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
 
     };
 
+    const handleAnalysis = async() => {
+        const response = await fetch(`/api/export-chat?userId=${userId}&chatId=${chatId}`);
+        const data = await response.json();
+        await getAnalysis(data);
+    }
+
+    const getAnalysis = async (data: JSON) => {
+
+        const { modal, resultContainer } = createModal();
+
+        try {
+            //const response = await fetch(`/api/export-chat?userId=${userId}&chatId=${chatId}`);
+            //const chatdata = await response.json();
+
+            console.log("getAnalysis called with data:", data);
+
+            const analysis = await getChatAnalysis(chatId);
+
+            if (analysis) { // existing branch preserved
+                createFeedbackScreen(resultContainer, analysis);
+                return analysis;
+            } else {
+                const res = await fetch('/api/analysis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ data })
+                });
+
+                const json = await res.json();
+                const content = responseFormat(json);
+
+                // display analysis in the modal
+                createFeedbackScreen(resultContainer, content);
+
+                // save into KV
+                setChatAnalysis(chatId, content);
+                return JSON.stringify(content);
+            }
+        } catch (error) {
+            console.error('Error during analysis:', error);
+            resultContainer.innerText = 'Error during analysis. Check console for details.';
+            throw error;
+        }
+
+        // helper to extract text from OpenAI-like response
+        function responseFormat(resp: any) {
+            return resp?.choices?.[0]?.message?.content
+                || resp?.output_text
+                || JSON.stringify(resp, null, 2);
+        }
+    };
+
+    const createFeedbackScreen = (resultContainer: any, analysis: string) => {
+
+        //resultContainer.innerHTML = escapeHtml(analysis);
+
+        resultContainer.render(<>
+        <FeedbackScreen data={analysis} />
+    </>);
+
+    }
+
     const handleNewSession = async () => {
         const systemMsg = "Session ends. A week has passed, and the patient has had some time to work on what they learned in the last session. We are at the beginning of a new therapy session.";
-        setMessages(currentMessages => [
-                  ...currentMessages,
-                  {
-                    id: nanoid(),
-                    display: <SystemMessage>{systemMsg}</SystemMessage>
-                  }
-                ])
+        setMessages((currentMessages: any) => [
+                                    ...currentMessages,
+                                    {
+                                        id: nanoid(),
+                                        display: <SystemMessage>{systemMsg}</SystemMessage>
+                                    }
+                                ])
     }
 
     return (
         <div className="flex flex-col h-full">
 
             <div className="flex items-center justify-between p-4 px-5">
-                <h4 className="text-lg font-bold">Patient Intake and Cognitive Conceptualization Diagram</h4>
+                <h4 className="text-lg font-bold">Patient Mental State and Feedback</h4>
             </div>
             <div className="mb-2 px-5 space-y-6 overflow-auto">
                 <label className="block pt-1 leading-normal font-medium">
@@ -355,7 +554,6 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                         </div>)}
                     </div>
                 ))}
-                <hr className="my-4 border-gray-300" />
                 {/*diagramRelated.map(name => (
                     <div key={name}>
                         <label className="block text-base font-bold mb-1">{diagramTitleMapping[name]}</label>
@@ -403,6 +601,13 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
 
             <div className="flex-col justify-end p-4 space-between-3">
                 <div><button
+                    className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-black text-sm font-semibold text-white"
+                    onClick={handleAnalysis}
+                >
+                    Conversation Analysis
+                </button></div>
+
+                <div><button
                     className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-red-500 text-sm font-semibold text-white"
                     onClick={handleSubmit}
                 >
@@ -416,7 +621,7 @@ export function DiagramList({ userId, chatId }: DiagramListProps) {
                     New session with patient
                 </button></div>
 
-                {isSubmitted && <div><button
+                {<div><button
                     className="text-sm mt-3 font-semiboldflex h-[35px] w-[220px] items-center justify-center rounded-md bg-blue-500 text-sm font-semibold text-white mt-3"
                     onClick={() => setShowSummary(!showSummary)}
                 >

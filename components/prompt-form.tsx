@@ -142,7 +142,7 @@ export function PromptForm({
     >
       <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden bg-background px-8 pr-[60px] sm:rounded-md sm:border sm:px-12">
         <Stopwatch />
-        <Textarea
+        <textarea
           ref={inputRef}
           tabIndex={0}
           onKeyDown={onKeyDown}
