@@ -184,7 +184,7 @@ export function ChatPanel({
                 <div className="text-sm text-zinc-600">
                   {example.subheading}
                 </div>
-                <div className="text-sm font-semibold">
+                <div className="text-lg font-semibold">
                   Click to begin conversation!
                 </div>
               </div>
