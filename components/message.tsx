@@ -26,7 +26,24 @@ import { getMsgTranslation } from '@/app/api/getDataFromKV'
 
 // Different types of message bubbles.
 
-export function UserMessage({ children }: { children: React.ReactNode }) {
+export function UserMessage({ children }: { children: string }) {
+
+    const { language }: { language: string } = useLanguage();
+  const speak = (text: string) => {
+
+    
+    if ('speechSynthesis' in window) {
+      //console.log("Available voices:", window.speechSynthesis.getVoices());
+      // console.log('Speaking:', text)
+      window.speechSynthesis.cancel() // Cancel any ongoing speech synthesis
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.lang = language;
+      utterance.rate = 1
+      window.speechSynthesis.speak(utterance)
+    } else {
+      console.error('TTS is not supported in this browser.')
+    }
+  }
   return (
     <div className="group relative flex items-start md:-ml-12">
       <div className="flex size-[25px] shrink-0 select-none items-center justify-center rounded-md border bg-background shadow-sm">
@@ -35,6 +52,26 @@ export function UserMessage({ children }: { children: React.ReactNode }) {
       <div className="ml-4 flex-1 space-y-2 overflow-hidden pl-2">
         {children}
       </div>
+      <div className="relative right-1 flex flex-col">
+        
+        <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                  type="button"
+                  size="icon"
+                  //title="Speak response"
+                  onClick={() => {
+                    console.log('Speak button clicked! Language:', language);
+                    speak(children);
+                  }}
+                >
+              <IconSun /> {/* TODO: Make icon a speaker */}
+              <span className="sr-only">Speak response</span>
+            </Button>
+            </TooltipTrigger>
+            <TooltipContent>Speak response</TooltipContent>
+          </Tooltip>
+          </div>
     </div>
   )
 }
@@ -189,7 +226,6 @@ export function BotMessage({
               <Button
                   type="button"
                   size="icon"
-                  //title="Speak response"
                   onClick={() => {
                     console.log('Translation toggle clicked!');
                     setShowOriginal(!showOriginal);

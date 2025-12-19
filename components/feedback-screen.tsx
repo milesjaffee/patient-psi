@@ -62,7 +62,7 @@ export function FeedbackScreen({data}: {data: FeedbackItems}) {
     function FeedbackString ({color, name, message}: {color: string, name: string, message: string}) {
         return (
             <div className={
-                `mt-2 flex-col p-3 justify-end text-center max-w-[350px] min-h-[60px] rounded-md justify-center text-${color} bg-gradient-to-b border-2 from-white ${color} `
+                `mt-2 flex-col p-3 justify-end text-center max-w-[580px] min-h-[60px] rounded-md justify-center text-${color} bg-gradient-to-b border-2 from-white ${color} `
             }>
             
                 <div className="text-2xl font-bold">{name}</div>

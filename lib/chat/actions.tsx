@@ -100,10 +100,6 @@ async function submitUserMessage(content: string, type: string) {
               content,
             }
           ],
-          translations: {
-            ...aiState.get().translations,
-            [newId]: translatedMessage
-          }
         })
 
         textNode = <BotMessage content={content} isDone={done} id={newId}/>
@@ -125,7 +121,7 @@ async function submitUserMessage(content: string, type: string) {
 }
 
 export type Message = {
-  role: 'user' | 'assistant' | 'system' | 'data'
+  role: "data" | "system" | "user" | "assistant" | "function" | "tool"
   content: string
   id: string
   name?: string
@@ -147,7 +143,7 @@ export const AI = createAI<AIState, UIState>({
   },
   initialUIState: [],
   initialAIState: { chatId: nanoid(), messages: [] },
-  unstable_onGetUIState: async () => {
+  onGetUIState: async () => {
     'use server'
 
     const session = await auth()
@@ -156,14 +152,14 @@ export const AI = createAI<AIState, UIState>({
       const aiState = getAIState()
 
       if (aiState) {
-        const uiState = getUIStateFromAIState(aiState)
+        const uiState = getUIStateFromAIState(aiState as Chat)
         return uiState
       }
     } else {
       return
     }
   },
-  unstable_onSetAIState: async ({ state, done }) => {
+  onSetAIState: async ({ state, done }) => {
     'use server'
 
     const session = await auth()
