@@ -81,7 +81,6 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
         className="group ml-[-12%] w-full overflow-auto pl-0 peer-[[data-state=open]]:lg:pl-[250px] peer-[[data-state=open]]:xl:pl-[300px]"
         ref={scrollRef}
       >
-        <h1>Hello</h1>
         
         {messages.length ? (
           <>
@@ -102,7 +101,6 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
           <>
             {!isStarted ? (
               <div className={cn('pb-[200px] pt-4 md:pt-10', className)} ref={messagesRef}>
-                Woow
                 
                 <StartSession
                   onStartedChange={handleStartedChange}
