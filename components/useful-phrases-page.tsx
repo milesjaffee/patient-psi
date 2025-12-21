@@ -93,7 +93,6 @@ export default function UsefulPhrasesPage({usefulPhrases, phraseListNames}: Usef
                           <Button
                               type="button"
                               size="icon"
-                              //title="Speak response"
                               onClick={() => {
                                 console.log('Speak button clicked! Language: en-US');
                                 speak(phrase, 'en-US');
@@ -115,7 +114,6 @@ export default function UsefulPhrasesPage({usefulPhrases, phraseListNames}: Usef
                           <Button
                               type="button"
                               size="icon"
-                              //title="Speak response"
                               onClick={() => {
                                 console.log('Speak button clicked! Language:', language);
                                 speak(usefulPhrases[phraseList][language] ? usefulPhrases[phraseList][language][index] : "Support for language not yet added!");

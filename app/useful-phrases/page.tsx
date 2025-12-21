@@ -26,9 +26,9 @@ export default function UsefulPhrases() {
     ],
     "es-ES": [
       "Hola",
-      "Buenas dias",
+      "Buenos dias",
       "Buenas tardes",
-      "Buenos noches",
+      "Buenas noches",
       "Como estas?",
       "Mucho gusto",
       "¿Tienes una relación cercana con tus padres?",
@@ -45,7 +45,8 @@ export default function UsefulPhrases() {
       "Cuéntame más por qué no te llevas bien con tu jefe.",
       "¿Qué te hace feliz?",
     ]
-  }
+  };
+
   const relevantVocabulary = {
     "en-US": [
       "Anxiety",
@@ -369,14 +370,38 @@ export default function UsefulPhrases() {
     ]
   };
 
+  const cbtDiscussion = {
+    "en-US": [
+      "CBT (Cognitive Behavioral Therapy) looks through thoughts under the lens of automatic thoughts, intermediary beliefs, and core beliefs which help to understand the underlying thread of the thought at hand",
+      "Cognitive distortions",
+      "Maladaptive thought patterns that contribute to the way we understand the world and others",
+      "Overgeneralization",
+      "All-or-nothing thinking",
+      "Catastrophizing",
+      "What evidence do you have that this thought is true?",
+      "What healthy thoughts could you replace your automatic thoughts with?"
+
+    ],
+    "es-ES": [
+      "La TCC (Terapia Cognitivo-Conductual, ingles: CBT) examina los pensamientos a través de la lente de los pensamientos automáticos, las creencias intermedias y las creencias centrales, lo que ayuda a comprender el hilo subyacente del pensamiento en cuestión",
+      "Distorsiones cognitivas",
+      "Patrones de pensamiento desadaptativos que influyen en cómo comprendemos el mundo y a los demás",
+      "Sobregeneralización",
+      "Pensamiento de todo o nada",
+      "Catastrofización",
+      "¿Qué pruebas tienes de que este pensamiento sea cierto?",
+      "¿Qué pensamientos saludables podrías usar para reemplazar tus pensamientos automáticos?"
+    ]
+  };
+
   const phraseList = [
     oldUsefulPhrases,relevantVocabulary, feelings,
     mentalHealthProfessionals,explainingDepression,explainingAnxiety, panicAttacks,
-    explainingPTSD, talkingAboutSuicide, explainingTherapy, explainingTreatments,empathyAndAssurance
+    explainingPTSD, talkingAboutSuicide, explainingTherapy, explainingTreatments,empathyAndAssurance, cbtDiscussion
   ];
   const phraseListNames = ["Generally Useful","Relevant Vocabulary", "Feelings",
     "Mental Health Professionals","Explaining Depression","Explaining Anxiety", "Panic Attacks",
-    "Explaining PTSD", "Self Harm and Suicide", "Explaining Therapy", "Explaining Treatments","Empathy And Assurance"];
+    "Explaining PTSD", "Self Harm and Suicide", "Explaining Therapy", "Explaining Treatments","Empathy And Assurance", "Talking About CBT"];
 
   return <UsefulPhrasesPage usefulPhrases={phraseList} phraseListNames={phraseListNames} />
   
